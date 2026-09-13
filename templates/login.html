@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>VulnGraph | Secure Login</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+    /* =================================================
+       LOGIN MESSAGE
+       ================================================= */
+
+    .login-message {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 0 22px 0;
+        padding: 14px 16px;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        border: 1px solid rgba(255, 80, 80, 0.45);
+        border-radius: 10px;
+
+        background: rgba(120, 20, 20, 0.22);
+
+        color: #ffb4b4;
+
+        font-size: 14px;
+        font-weight: 500;
+
+        line-height: 1.5;
+
+        box-shadow:
+            0 0 18px rgba(255, 50, 50, 0.08);
+
+        animation: loginMessageAppear 0.25s ease-out;
+    }
+
+    .login-message-icon {
+        min-width: 25px;
+        width: 25px;
+        height: 25px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: rgba(255, 70, 70, 0.18);
+        border: 1px solid rgba(255, 90, 90, 0.45);
+
+        color: #ff7777;
+
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .login-message-text {
+        flex: 1;
+    }
+
+    @keyframes loginMessageAppear {
+
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body class="auth-page">
+
+<!-- =================================================
+     CYBER BACKGROUND
+     ================================================= -->
+
+<div class="cyber-background">
+
+    <div class="grid-overlay"></div>
+
+    <div class="glow glow-one"></div>
+
+    <div class="glow glow-two"></div>
+
+</div>
+
+
+<!-- =================================================
+     MAIN AUTH CONTAINER
+     ================================================= -->
+
+<main class="auth-container">
+
+
+    <!-- =================================================
+         LOGIN CARD
+         ================================================= -->
+
+    <section class="login-card">
+
+
+        <!-- =================================================
+             LOGO
+             ================================================= -->
+
+        <div class="vg-logo">
+
+
+            <div class="vg-shield">
+
+
+                <div class="vg-node node-one"></div>
+
+                <div class="vg-node node-two"></div>
+
+                <div class="vg-node node-three"></div>
+
+                <div class="vg-node node-four"></div>
+
+
+                <div class="vg-line line-one"></div>
+
+                <div class="vg-line line-two"></div>
+
+                <div class="vg-line line-three"></div>
+
+
+                <span>V</span>
+
+
+            </div>
+
+
+            <div class="vg-brand">
+
+                <h1>
+                    VulnGraph
+                </h1>
+
+                <p>
+                    DEPENDENCY SECURITY INTELLIGENCE
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             LOGIN HEADING
+             ================================================= -->
+
+        <div class="login-heading">
+
+            <h2>
+                Secure Access
+            </h2>
+
+            <p>
+                Sign in to access the VulnGraph security analysis platform.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             LOGIN MESSAGE
+             ================================================= -->
+
+        {% if login_message %}
+
+            <div class="login-message"
+                 role="alert"
+                 aria-live="polite">
+
+                <span class="login-message-icon">
+                    !
+                </span>
+
+                <span class="login-message-text">
+                    {{ login_message }}
+                </span>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             FLASK FLASH MESSAGE FALLBACK
+             ================================================= -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="login-message"
+                         role="alert"
+                         aria-live="polite">
+
+                        <span class="login-message-icon">
+
+                            {% if category == "error" %}
+                                !
+                            {% else %}
+                                ✓
+                            {% endif %}
+
+                        </span>
+
+                        <span class="login-message-text">
+                            {{ message }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =================================================
+             LOGIN FORM
+             ================================================= -->
+
+        <form method="POST"
+              action="{{ url_for('login') }}"
+              class="auth-form">
+
+
+            <!-- USERNAME -->
+
+            <div class="form-group">
+
+                <label for="username">
+                    USERNAME
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter username"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    PASSWORD
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter password"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <!-- LOGIN BUTTON -->
+
+            <button
+                type="submit"
+                class="auth-button"
+            >
+
+                <span>
+                    Secure Login
+                </span>
+
+                <span class="button-arrow">
+                    →
+                </span>
+
+            </button>
+
+
+        </form>
+
+
+        <!-- =================================================
+             SECURITY NOTE
+             ================================================= -->
+
+        <div class="security-note">
+
+            <span class="secure-icon">
+                ✓
+            </span>
+
+            <span>
+                Protected security analysis environment
+            </span>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         FOOTER
+         ================================================= -->
+
+    <footer class="auth-footer">
+
+        <strong>
+            VulnGraph
+        </strong>
+
+        <span>
+            •
+        </span>
+
+        Software Dependency Security Framework
+
+    </footer>
+
+
+</main>
+
+</body>
+
+</html>

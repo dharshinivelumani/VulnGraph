@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VulnGraph - What-If Simulation</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>What-If Risk Simulation</h1>
+
+        <h2>{{ dependency_name }}</h2>
+
+
+        <!-- ========================= -->
+        <!-- Current Security State -->
+        <!-- ========================= -->
+
+        <div class="dependency-card">
+
+            <h3>Current Security State</h3>
+
+            <p>
+                <strong>Current Version:</strong>
+                {{ current_version }}
+            </p>
+
+            <p>
+                <strong>Current Vulnerabilities:</strong>
+                {{ current_vulnerabilities|length }}
+            </p>
+
+            <p>
+                <strong>Current Risk Score:</strong>
+                {{ simulation.current_risk }}%
+            </p>
+
+            <p>
+                <strong>Trust Score:</strong>
+                {{ trust_score }}%
+            </p>
+
+            <hr>
+
+            <h3>Simulated Security State</h3>
+
+            <p>
+                <strong>Target Version:</strong>
+                {{ target_version }}
+            </p>
+
+            <p>
+                <strong>Simulated Vulnerabilities:</strong>
+                {{ simulated_vulnerabilities|length }}
+            </p>
+
+            <p>
+                <strong>Simulated Risk Score:</strong>
+                {{ simulation.simulated_risk }}%
+            </p>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- Risk Comparison -->
+        <!-- ========================= -->
+
+        <div class="dependency-card">
+
+            <h3>Risk Comparison</h3>
+
+            <p>
+                <strong>Current Risk:</strong>
+                {{ simulation.current_risk }}%
+            </p>
+
+            <p>
+                <strong>Simulated Risk:</strong>
+                {{ simulation.simulated_risk }}%
+            </p>
+
+            <p>
+                <strong>Risk Reduction:</strong>
+                {{ simulation.risk_reduction }}%
+            </p>
+
+            <p>
+                <strong>Risk Reduction Percentage:</strong>
+                {{ simulation.risk_reduction_percentage }}%
+            </p>
+
+            <p>
+                <strong>Current Vulnerabilities:</strong>
+                {{ simulation.current_vulnerability_count }}
+            </p>
+
+            <p>
+                <strong>Simulated Vulnerabilities:</strong>
+                {{ simulation.simulated_vulnerability_count }}
+            </p>
+
+            <p>
+                <strong>Vulnerability Change:</strong>
+                {{ simulation.vulnerability_reduction }}
+            </p>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- Security Status -->
+        <!-- ========================= -->
+
+        <div class="recommendation-box">
+
+            <h3>Security Status</h3>
+
+            <p>
+                <strong>
+                    {{ simulation.security_status }}
+                </strong>
+            </p>
+
+            <p>
+                {{ simulation.vulnerability_status }}
+            </p>
+
+            <hr>
+
+            <h3>Simulation Result</h3>
+
+            <p>
+                {{ simulation.simulation_result }}
+            </p>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- What-If Interpretation -->
+        <!-- ========================= -->
+
+        <div class="recommendation-box">
+
+            <h3>What-If Interpretation</h3>
+
+            {% if simulation.risk_reduction > 0 %}
+
+                <p>
+                    Upgrading
+                    <strong>{{ dependency_name }}</strong>
+                    to
+                    <strong>{{ target_version }}</strong>
+                    reduces the calculated security risk.
+                </p>
+
+                <p>
+                    The risk changes from
+                    <strong>
+                        {{ simulation.current_risk }}%
+                    </strong>
+                    to
+                    <strong>
+                        {{ simulation.simulated_risk }}%
+                    </strong>.
+                </p>
+
+                {% if simulation.vulnerability_reduction > 0 %}
+
+                    <p>
+                        The number of known vulnerabilities is
+                        reduced by
+                        <strong>
+                            {{ simulation.vulnerability_reduction }}
+                        </strong>.
+                    </p>
+
+                {% endif %}
+
+            {% elif simulation.risk_reduction == 0 %}
+
+                <p>
+                    Upgrading to
+                    <strong>{{ target_version }}</strong>
+                    does not produce a measurable change in
+                    the calculated risk score.
+                </p>
+
+            {% else %}
+
+                <p>
+                    The simulated target version produces a
+                    higher calculated security risk.
+                </p>
+
+                <p>
+                    Current risk:
+                    <strong>
+                        {{ simulation.current_risk }}%
+                    </strong>
+                </p>
+
+                <p>
+                    Simulated risk:
+                    <strong>
+                        {{ simulation.simulated_risk }}%
+                    </strong>
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- Security Note -->
+        <!-- ========================= -->
+
+        <div class="dependency-card">
+
+            <h3>Security Note</h3>
+
+            <p>
+                This simulation is an analytical estimate based
+                on the vulnerability and risk data available for
+                the selected target version. It does not guarantee
+                application compatibility or complete vulnerability
+                remediation.
+            </p>
+
+            <p>
+                Compatibility testing and verification against the
+                relevant security advisories are recommended before
+                deploying the target version.
+            </p>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- Back to Dashboard -->
+        <!-- ========================= -->
+
+        <p>
+            <a href="/">
+                Back to VulnGraph
+            </a>
+        </p>
+
+    </div>
+
+</body>
+
+</html>

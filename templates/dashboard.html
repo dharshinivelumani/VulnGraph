@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VulnGraph — Security Operations</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+
+<div class="vg-app">
+
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
+    <aside class="vg-sidebar">
+
+        <div class="vg-brand">
+            <div class="vg-brand-logo">VG</div>
+
+            <div class="vg-brand-text">
+                <h1>VulnGraph</h1>
+                <span>Security Intelligence</span>
+            </div>
+        </div>
+
+        <div class="vg-engine-status">
+            <span class="vg-live-dot"></span>
+            Analysis engine online
+        </div>
+
+        <nav class="vg-navigation">
+
+            <div class="vg-nav-title">SECURITY OPERATIONS</div>
+
+            <a href="#overview" class="vg-nav-item active">
+                <b>01</b>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#dependencies" class="vg-nav-item">
+                <b>02</b>
+                <span>Dependency Analysis</span>
+            </a>
+
+            <a href="#vulnerabilities" class="vg-nav-item">
+                <b>03</b>
+                <span>Vulnerability Findings</span>
+            </a>
+
+            <a href="#graph" class="vg-nav-item">
+                <b>04</b>
+                <span>Dependency Graph</span>
+            </a>
+
+            <a href="#risk-analysis" class="vg-nav-item">
+                <b>05</b>
+                <span>Risk Analysis</span>
+            </a>
+
+            <a href="#workflow" class="vg-nav-item">
+                <b>06</b>
+                <span>Analysis Pipeline</span>
+            </a>
+
+            <div class="vg-nav-title vg-report-title">
+                REPORTING
+            </div>
+
+            <a href="{{ url_for('generate_report') }}" class="vg-nav-item">
+                <b>PDF</b>
+                <span>Security Report</span>
+            </a>
+
+            <a href="{{ url_for('logout') }}" class="vg-nav-item">
+                <b>↪</b>
+                <span>Sign Out</span>
+            </a>
+
+        </nav>
+
+        <div class="vg-sidebar-bottom">
+            <div class="vg-core-icon">◆</div>
+
+            <div>
+                <strong>VulnGraph Core</strong>
+                <small>Risk-aware dependency analysis</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================================
+         MAIN APPLICATION
+    ========================================================== -->
+    <section class="vg-main">
+
+        <!-- TOP BAR -->
+        <header class="vg-topbar">
+
+            <div>
+                <div class="vg-breadcrumb">
+                    VULNGRAPH / SECURITY MONITOR
+                </div>
+
+                <h2>VulnGraph Security Monitor</h2>
+            </div>
+
+            <div class="vg-top-actions">
+
+                <div class="vg-system-status">
+                    <span></span>
+                    SYSTEM ACTIVE
+                </div>
+
+                <a href="{{ url_for('generate_report') }}"
+                   class="vg-report-btn">
+                    <span>PDF</span>
+                    Generate Report
+                </a>
+
+                <a href="{{ url_for('logout') }}"
+                   class="vg-logout-btn">
+                    Logout
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             DASHBOARD CONTENT
+        ====================================================== -->
+        <main class="vg-content">
+
+            <!-- WELCOME -->
+            <section id="overview" class="vg-welcome">
+
+                <div class="vg-welcome-left">
+
+                    <div class="vg-welcome-logo">
+                        VG
+                    </div>
+
+                    <div>
+                        <div class="vg-kicker">
+                            SECURITY MONITOR / SYSTEM ACTIVE
+                        </div>
+
+                        <h1>Dependency Security Monitor</h1>
+
+                        <p>
+                            Analyze project dependencies, detect vulnerability
+                            exposure and prioritize remediation from one
+                            security workspace.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="vg-target-box">
+
+                    <span>ANALYZED TARGET</span>
+
+                    <strong>
+                        {{ filename | default("Dependency File") }}
+                    </strong>
+
+                    <small>
+                        {{ ecosystem | default("npm") | upper }} ECOSYSTEM
+                    </small>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 KPI CARDS
+            ================================================== -->
+            <section class="vg-kpi-grid">
+
+                <div class="vg-kpi vg-kpi-blue">
+
+                    <div class="vg-kpi-icon">
+                        DEP
+                    </div>
+
+                    <span>Total Dependencies</span>
+
+                    <strong>
+                        {{ total_dependencies | default(0) }}
+                    </strong>
+
+                    <small>
+                        Packages analyzed
+                    </small>
+
+                </div>
+
+
+                <div class="vg-kpi vg-kpi-red">
+
+                    <div class="vg-kpi-icon">
+                        !
+                    </div>
+
+                    <span>Vulnerable Dependencies</span>
+
+                    <strong>
+                        {{ vulnerable_dependencies | default(0) }}
+                    </strong>
+
+                    <small>
+                        Require investigation
+                    </small>
+
+                </div>
+
+
+                <div class="vg-kpi vg-kpi-yellow">
+
+                    <div class="vg-kpi-icon">
+                        CVE
+                    </div>
+
+                    <span>Total Vulnerabilities</span>
+
+                    <strong>
+                        {{ total_vulnerabilities | default(0) }}
+                    </strong>
+
+                    <small>
+                        Known findings
+                    </small>
+
+                </div>
+
+
+                <div class="vg-kpi vg-kpi-green">
+
+                    <div class="vg-kpi-icon">
+                        RISK
+                    </div>
+
+                    <span>Average Risk Score</span>
+
+                    <strong>
+                        {{ "%.1f"|format(average_risk|default(0)) }}%
+                    </strong>
+
+                    <small>
+                        Calculated posture
+                    </small>
+
+                </div>
+
+
+                <div class="vg-kpi vg-kpi-critical">
+
+                    <div class="vg-kpi-icon">
+                        HIGH
+                    </div>
+
+                    <span>Critical / High Findings</span>
+
+                    <strong>
+                        {% set critical_high = namespace(value=0) %}
+
+                        {% for item in results|default([]) %}
+                            {% for vuln in item.vulnerabilities|default([]) %}
+                                {% if vuln.severity|default('')|lower in ['critical','high'] %}
+                                    {% set critical_high.value =
+                                       critical_high.value + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+
+                        {{ critical_high.value }}
+                    </strong>
+
+                    <small>
+                        Priority findings
+                    </small>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MAIN ANALYTICS GRID
+            ================================================== -->
+            <section class="vg-main-grid">
+
+                <!-- DEPENDENCY INTAKE -->
+                <div class="vg-panel vg-intake-panel">
+
+                    <div class="vg-panel-header">
+
+                        <div>
+                            <div class="vg-panel-icon">UP</div>
+
+                            <h3>Dependency Intake</h3>
+
+                            <p>
+                                Start another security analysis from the
+                                dependency upload workflow.
+                            </p>
+                        </div>
+
+                        <span class="vg-ready">
+                            ● READY
+                        </span>
+
+                    </div>
+
+                    <div class="vg-upload-box">
+
+                        <div class="vg-upload-icon">
+                            ↑
+                        </div>
+
+                        <strong>
+                            Analyze a new dependency file
+                        </strong>
+
+                        <p>
+                            Supported project manifests can be submitted
+                            from the upload screen.
+                        </p>
+
+                        <a href="/upload" class="vg-upload-btn">
+                            OPEN UPLOAD WORKSPACE
+                        </a>
+
+                    </div>
+
+                    <div class="vg-current-target">
+
+                        <span>Current target</span>
+
+                        <strong>
+                            {{ filename|default("—") }}
+                        </strong>
+
+                        <b>
+                            {{ ecosystem|default("npm")|upper }}
+                        </b>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RISK DISTRIBUTION -->
+                <div class="vg-panel">
+
+                    <div class="vg-panel-header">
+
+                        <div>
+                            <div class="vg-panel-icon">CVE</div>
+
+                            <h3>Vulnerability Risk Distribution</h3>
+
+                            <p>
+                                Severity breakdown of current findings.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    {% set critical_count = namespace(value=0) %}
+                    {% set high_count = namespace(value=0) %}
+                    {% set medium_count = namespace(value=0) %}
+                    {% set low_count = namespace(value=0) %}
+
+                    {% for item in results|default([]) %}
+                        {% for vuln in item.vulnerabilities|default([]) %}
+
+                            {% set sev = vuln.severity|default('')|lower %}
+
+                            {% if sev == 'critical' %}
+                                {% set critical_count.value =
+                                   critical_count.value + 1 %}
+                            {% elif sev == 'high' %}
+                                {% set high_count.value =
+                                   high_count.value + 1 %}
+                            {% elif sev == 'medium' %}
+                                {% set medium_count.value =
+                                   medium_count.value + 1 %}
+                            {% elif sev == 'low' %}
+                                {% set low_count.value =
+                                   low_count.value + 1 %}
+                            {% endif %}
+
+                        {% endfor %}
+                    {% endfor %}
+
+                    <div class="vg-risk-content">
+
+                        <div class="vg-donut"
+                             style="--critical: {{ critical_count.value }};
+                                    --high: {{ high_count.value }};
+                                    --medium: {{ medium_count.value }};
+                                    --low: {{ low_count.value }};">
+
+                            <div class="vg-donut-inner">
+                                <strong>
+                                    {{ total_vulnerabilities|default(0) }}
+                                </strong>
+                                <span>Total Issues</span>
+                            </div>
+
+                        </div>
+
+                        <div class="vg-risk-list">
+
+                            <div>
+                                <i class="critical"></i>
+                                <span>Critical</span>
+                                <b>{{ critical_count.value }}</b>
+                            </div>
+
+                            <div>
+                                <i class="high"></i>
+                                <span>High</span>
+                                <b>{{ high_count.value }}</b>
+                            </div>
+
+                            <div>
+                                <i class="medium"></i>
+                                <span>Medium</span>
+                                <b>{{ medium_count.value }}</b>
+                            </div>
+
+                            <div>
+                                <i class="low"></i>
+                                <span>Low</span>
+                                <b>{{ low_count.value }}</b>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TRUST -->
+                <div class="vg-panel">
+
+                    <div class="vg-panel-header">
+
+                        <div>
+                            <div class="vg-panel-icon">TR</div>
+
+                            <h3>Dependency Trust Assessment</h3>
+
+                            <p>
+                                Trust posture derived from package-level
+                                assessment.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    {% set trusted_count = namespace(value=0) %}
+
+                    {% for item in results|default([]) %}
+                        {% set trust =
+                            item.trust_score|default(item.trust|default(0))|float %}
+
+                        {% if trust >= 70 %}
+                            {% set trusted_count.value =
+                               trusted_count.value + 1 %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if total_dependencies|default(0)|int > 0 %}
+                        {% set trust_percent =
+                            (trusted_count.value /
+                            total_dependencies|int * 100)|round|int %}
+                    {% else %}
+                        {% set trust_percent = 0 %}
+                    {% endif %}
+
+                    <div class="vg-trust-content">
+
+                        <div class="vg-trust-donut"
+                             style="--trust: {{ trust_percent }}%;">
+
+                            <div>
+                                <strong>{{ trust_percent }}%</strong>
+                                <span>Trusted</span>
+                            </div>
+
+                        </div>
+
+                        <div class="vg-trust-info">
+
+                            <div class="vg-trust-line">
+                                <span></span>
+                            </div>
+
+                            <strong>
+                                {{ trusted_count.value }}
+                            </strong>
+
+                            <small>
+                                dependencies assessed
+                            </small>
+
+                            <p>
+                                Higher scores indicate stronger package
+                                trust characteristics.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 VULNERABILITY SUMMARY
+            ================================================== -->
+            <section id="vulnerabilities"
+                     class="vg-panel vg-summary-panel">
+
+                <div class="vg-panel-header">
+
+                    <div>
+                        <div class="vg-panel-icon">!</div>
+
+                        <h3>Vulnerability Summary</h3>
+
+                        <p>
+                            Current security findings by severity.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="vg-severity-cards">
+
+                    <div class="vg-severity-card critical">
+                        <div>▲</div>
+                        <strong>{{ critical_count.value }}</strong>
+                        <span>Critical</span>
+                    </div>
+
+                    <div class="vg-severity-card high">
+                        <div>●</div>
+                        <strong>{{ high_count.value }}</strong>
+                        <span>High</span>
+                    </div>
+
+                    <div class="vg-severity-card medium">
+                        <div>●</div>
+                        <strong>{{ medium_count.value }}</strong>
+                        <span>Medium</span>
+                    </div>
+
+                    <div class="vg-severity-card low">
+                        <div>●</div>
+                        <strong>{{ low_count.value }}</strong>
+                        <span>Low</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 GRAPH + RECENT ANALYSIS
+            ================================================== -->
+            <section class="vg-bottom-grid">
+
+                <!-- GRAPH -->
+                <div id="graph"
+                     class="vg-panel vg-graph-panel">
+
+                    <div class="vg-panel-header vg-graph-header">
+
+                        <div>
+
+                            <div class="vg-panel-icon">
+                                ◇
+                            </div>
+
+                            <h3>Dependency Relationship Map</h3>
+
+                            <p>
+                                Visualize your project dependencies and
+                                their relationships.
+                            </p>
+
+                        </div>
+
+                        <button type="button"
+                                class="vg-full-graph-btn">
+                            ⛶ View Full Graph
+                        </button>
+
+                    </div>
+
+                    <!-- IMPORTANT:
+                         script.js uses this ID.
+                    -->
+                    <div id="dependency-graph"></div>
+
+                </div>
+
+
+                <!-- RECENT ANALYSIS -->
+                <div class="vg-panel vg-recent-panel">
+
+                    <div class="vg-panel-header">
+
+                        <div>
+
+                            <div class="vg-panel-icon">
+                                ◷
+                            </div>
+
+                            <h3>Recent Analysis</h3>
+
+                        </div>
+
+                        <a href="#dependencies"
+                           class="vg-view-all">
+                            View All
+                        </a>
+
+                    </div>
+
+                    <div class="vg-analysis-list">
+
+                        <div class="vg-analysis-row">
+                            <div class="vg-file-icon">▤</div>
+                            <div>
+                                <strong>
+                                    {{ filename|default("package.json") }}
+                                </strong>
+                                <span>Completed</span>
+                            </div>
+                            <small>Current</small>
+                        </div>
+
+                        <div class="vg-analysis-row">
+                            <div class="vg-file-icon">▤</div>
+                            <div>
+                                <strong>requirements.txt</strong>
+                                <span>Completed</span>
+                            </div>
+                            <small>Previous</small>
+                        </div>
+
+                        <div class="vg-analysis-row">
+                            <div class="vg-file-icon">▤</div>
+                            <div>
+                                <strong>pom.xml</strong>
+                                <span>Completed</span>
+                            </div>
+                            <small>Previous</small>
+                        </div>
+
+                        <div class="vg-analysis-row">
+                            <div class="vg-file-icon">▤</div>
+                            <div>
+                                <strong>package.json</strong>
+                                <span>Completed</span>
+                            </div>
+                            <small>Previous</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DEPENDENCY FINDINGS
+            ================================================== -->
+            <section id="dependencies"
+                     class="vg-panel vg-findings-panel">
+
+                <div class="vg-panel-header">
+
+                    <div>
+                        <div class="vg-panel-icon">DEP</div>
+
+                        <h3>Dependency Security Findings</h3>
+
+                        <p>
+                            Detailed package-level vulnerability analysis.
+                        </p>
+                    </div>
+
+                    <div class="vg-findings-count">
+                        {{ total_dependencies|default(0) }}
+                        packages
+                    </div>
+
+                </div>
+
+
+                {% if results %}
+
+                <div class="vg-dependency-list">
+
+                    {% for item in results %}
+
+                    <article class="vg-dependency-card">
+
+                        <div class="vg-dependency-top">
+
+                            <div>
+
+                                <h4>
+                                    {{ item.name }}
+                                </h4>
+
+                                <span class="vg-dependency-type">
+                                    {{ item.dependency_type|default("Dependency") }}
+                                </span>
+
+                            </div>
+
+                            <div class="vg-risk-badge
+                                {% if item.risk_level|default('')|lower == 'high' %}
+                                    danger
+                                {% elif item.risk_level|default('')|lower == 'medium' %}
+                                    warning
+                                {% else %}
+                                    safe
+                                {% endif %}">
+
+                                Risk
+                                {{ item.risk_score|default(item.risk|default(0)) }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="vg-dependency-meta">
+
+                            <div>
+                                <span>Declared</span>
+                                <strong>
+                                    {{ item.declared_version|default("—") }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Installed</span>
+                                <strong>
+                                    {{ item.installed_version|default(item.version|default("—")) }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Vulnerabilities</span>
+                                <strong>
+                                    {{ item.vulnerability_count|default(0) }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Impact</span>
+                                <strong>
+                                    {{ item.impact_level|default(item.impact|default("—")) }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Trust</span>
+                                <strong>
+                                    {{ item.trust_score|default(item.trust|default("—")) }}
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        {% if item.vulnerabilities %}
+
+                        <div class="vg-vulnerability-items">
+
+                            {% for vuln in item.vulnerabilities %}
+
+                            <div class="vg-vulnerability-row">
+
+                                <div>
+                                    <strong>
+                                        {{ vuln.id|default("Security Finding") }}
+                                    </strong>
+
+                                    <p>
+                                        {{ vuln.summary|default("Vulnerability detected in dependency.") }}
+                                    </p>
+                                </div>
+
+                                <div class="vg-vuln-severity
+                                    {{ vuln.severity|default('unknown')|lower }}">
+
+                                    {{ vuln.severity|default("Unknown") }}
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if item.recommendation %}
+
+                        <div class="vg-recommendation">
+
+                            <span>RECOMMENDATION</span>
+
+                            <p>
+                                {{ item.recommendation }}
+                            </p>
+
+                        </div>
+
+                        {% endif %}
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="vg-empty-state">
+                    <strong>No dependency findings available</strong>
+                    <span>Upload a dependency file to begin analysis.</span>
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- =================================================
+                 SECURITY INTERPRETATION
+            ================================================== -->
+            <section id="risk-analysis"
+                     class="vg-panel vg-interpretation">
+
+                <div class="vg-panel-header">
+
+                    <div>
+                        <div class="vg-panel-icon">RISK</div>
+
+                        <h3>Security Interpretation</h3>
+
+                        <p>
+                            Risk-aware interpretation of the current
+                            dependency posture.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="vg-interpretation-grid">
+
+                    <div>
+                        <span>SECURITY POSTURE</span>
+
+                        <strong>
+                            {% if average_risk|default(0)|float >= 70 %}
+                                Elevated Risk
+                            {% elif average_risk|default(0)|float >= 40 %}
+                                Moderate Risk
+                            {% else %}
+                                Low Risk
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>ANALYZED DEPENDENCIES</span>
+
+                        <strong>
+                            {{ total_dependencies|default(0) }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>OPEN VULNERABILITIES</span>
+
+                        <strong>
+                            {{ total_vulnerabilities|default(0) }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>AVERAGE RISK</span>
+
+                        <strong>
+                            {{ "%.1f"|format(average_risk|default(0)) }}%
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 WORKFLOW
+            ================================================== -->
+            <section id="workflow"
+                     class="vg-panel vg-workflow">
+
+                <div class="vg-panel-header">
+
+                    <div>
+                        <div class="vg-panel-icon">PIPE</div>
+
+                        <h3>Analysis Pipeline</h3>
+
+                        <p>
+                            VulnGraph dependency security workflow.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="vg-workflow-steps">
+
+                    <div class="vg-step active">
+                        <b>01</b>
+                        <strong>Upload</strong>
+                        <span>Dependency manifest</span>
+                    </div>
+
+                    <div class="vg-step-line"></div>
+
+                    <div class="vg-step active">
+                        <b>02</b>
+                        <strong>Analyze</strong>
+                        <span>Package resolution</span>
+                    </div>
+
+                    <div class="vg-step-line"></div>
+
+                    <div class="vg-step active">
+                        <b>03</b>
+                        <strong>Detect</strong>
+                        <span>Security findings</span>
+                    </div>
+
+                    <div class="vg-step-line"></div>
+
+                    <div class="vg-step active">
+                        <b>04</b>
+                        <strong>Prioritize</strong>
+                        <span>Risk assessment</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <footer class="vg-footer">
+            <span>VulnGraph Security Intelligence</span>
+            <span>Risk-aware dependency analysis</span>
+        </footer>
+
+    </section>
+
+</div>
+
+
+<!-- Existing graph data -->
+<script>
+    const graphData =
+        {{ graph_data | default({}) | tojson }};
+</script>
+
+<!-- DO NOT REMOVE -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

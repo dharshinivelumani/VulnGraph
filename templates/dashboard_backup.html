@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VulnGraph Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                VulnGraph
+            </h1>
+
+            <p>
+                Software Dependency Security Analysis Dashboard
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-btn">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY -->
+    <!-- ================================================= -->
+
+    <section class="summary-section">
+
+        <h2>
+            Security Summary
+        </h2>
+
+
+        <div class="summary-grid">
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Total Dependencies
+                </h3>
+
+                <p>
+                    {{ total_dependencies }}
+                </p>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Vulnerable Dependencies
+                </h3>
+
+                <p>
+                    {{ vulnerable_dependencies }}
+                </p>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Total Vulnerabilities
+                </h3>
+
+                <p>
+                    {{ total_vulnerabilities }}
+                </p>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Average Risk
+                </h3>
+
+                <p>
+                    {{ average_risk }}%
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- DEPENDENCY ANALYSIS -->
+    <!-- ================================================= -->
+
+    <section class="dependencies-section">
+
+
+        <h2>
+            Dependency Analysis
+        </h2>
+
+
+        {% if scan_results %}
+
+
+            {% for result in scan_results %}
+
+
+            <div class="dependency-card">
+
+
+                <!-- ================================================= -->
+                <!-- DEPENDENCY HEADER -->
+                <!-- ================================================= -->
+
+                <div class="dependency-header">
+
+                    <div>
+
+                        <h3>
+                            {{ result.name }}
+                        </h3>
+
+
+                        <p>
+
+                            Scan Status:
+
+                            <strong>
+                                {{ result.status }}
+                            </strong>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- BASIC INFORMATION -->
+                <!-- ================================================= -->
+
+                <div class="dependency-info-grid">
+
+
+                    <div class="info-box">
+
+                        <h4>
+                            Installed Version
+                        </h4>
+
+                        <p>
+                            {{ result.installed_version }}
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="info-box">
+
+                        <h4>
+                            Vulnerabilities
+                        </h4>
+
+                        <p>
+                            {{ result.vulnerabilities | length }}
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="info-box">
+
+                        <h4>
+                            Dependency Type
+                        </h4>
+
+                        <p>
+                            {{ result.type | default("Dependency") }}
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="info-box">
+
+                        <h4>
+                            Impact
+                        </h4>
+
+                        <p>
+                            {{ result.impact_level | default("Low") }}
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- RISK ASSESSMENT -->
+                <!-- ================================================= -->
+
+                <div class="risk-section">
+
+
+                    <h3>
+                        Risk Assessment
+                    </h3>
+
+
+                    <div class="risk-grid">
+
+
+                        <div class="risk-box">
+
+                            <h4>
+                                Risk Score
+                            </h4>
+
+                            <p>
+                                {{ result.risk_score }}%
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="risk-box">
+
+                            <h4>
+                                Risk Level
+                            </h4>
+
+                            <p>
+                                {{ result.risk_level }}
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="risk-box">
+
+                            <h4>
+                                Exposure
+                            </h4>
+
+                            <p>
+                                {{ result.exposure_level }}
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="risk-box">
+
+                            <h4>
+                                Criticality
+                            </h4>
+
+                            <p>
+                                {{ result.criticality }}
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- TRUST ASSESSMENT -->
+                <!-- ================================================= -->
+
+                <div class="trust-section">
+
+
+                    <h3>
+                        Trust Assessment
+                    </h3>
+
+
+                    <div class="trust-grid">
+
+
+                        <div class="trust-box">
+
+                            <h4>
+                                Trust Score
+                            </h4>
+
+                            <p>
+                                {{ result.trust_score }}%
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="trust-box">
+
+                            <h4>
+                                Trust Level
+                            </h4>
+
+                            <p>
+                                {{ result.trust_level }}
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="trust-box">
+
+                            <h4>
+                                Package Age
+                            </h4>
+
+                            <p>
+                                {{ result.package_age_days }}
+                                days
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="trust-box">
+
+                            <h4>
+                                Version Count
+                            </h4>
+
+                            <p>
+                                {{ result.version_count }}
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="trust-box">
+
+                            <h4>
+                                Repository
+                            </h4>
+
+                            <p>
+
+                                {% if result.repository_available %}
+
+                                    Available
+
+                                {% else %}
+
+                                    Not Available
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="trust-box">
+
+                            <h4>
+                                Latest Version
+                            </h4>
+
+                            <p>
+                                {{ result.latest_version }}
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- REMEDIATION RECOMMENDATION -->
+                <!-- ================================================= -->
+
+                <div class="recommendation-section">
+
+
+                    <h3>
+                        Remediation Recommendation
+                    </h3>
+
+
+                    {% if result.recommendation is mapping %}
+
+
+                        <p>
+
+                            <strong>
+                                Priority:
+                            </strong>
+
+                            {{ result.recommendation.priority }}
+
+                        </p>
+
+
+                        <p>
+
+                            {{ result.recommendation.recommendation
+                               | default(
+                               result.recommendation.message
+                               | default(
+                               "Review dependency security status."
+                               )
+                               )
+                            }}
+
+                        </p>
+
+
+                    {% else %}
+
+
+                        <p>
+                            {{ result.recommendation }}
+                        </p>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- EXPLAINABILITY -->
+                <!-- ================================================= -->
+
+                <div class="explainability-section">
+
+
+                    <h3>
+                        Explainable Security Analysis
+                    </h3>
+
+
+                    <p>
+                        {{ result.explanation }}
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- WHAT-IF VERSION SIMULATION -->
+                <!-- ================================================= -->
+
+                <div class="simulation-box">
+
+
+                    <h4>
+                        What-If Risk Simulation
+                    </h4>
+
+
+                    <p>
+
+                        Simulate how the security risk
+                        changes when this dependency is
+                        upgraded to another version.
+
+                    </p>
+
+
+
+                    <form action="{{ url_for('simulate') }}"
+                          method="POST">
+
+
+                        <!-- Dependency Name -->
+
+                        <input type="hidden"
+                               name="dependency_name"
+                               value="{{ result.name }}">
+
+
+
+                        <!-- Current Version -->
+
+                        <label>
+
+                            <strong>
+                                Current Version:
+                            </strong>
+
+                        </label>
+
+
+                        <input type="text"
+                               value="{{ result.installed_version }}"
+                               readonly
+                               style="
+                                   color: #111827;
+                                   background: #f1f5f9;
+                                   border: 1px solid #cbd5e1;
+                                   padding: 11px 13px;
+                                   border-radius: 8px;
+                                   font-size: 14px;
+                                   width: 100%;
+                                   box-sizing: border-box;
+                               ">
+
+
+
+                        <br>
+                        <br>
+
+
+
+                        <!-- Target Version -->
+
+                        <label>
+
+                            <strong>
+                                Target Version:
+                            </strong>
+
+                        </label>
+
+
+                        <input type="text"
+                               name="target_version"
+                               placeholder="Example: 5.2.1"
+                               style="
+                                   color: #111827;
+                                   background: #ffffff;
+                                   border: 1px solid #cbd5e1;
+                                   padding: 11px 13px;
+                                   border-radius: 8px;
+                                   font-size: 14px;
+                                   width: 100%;
+                                   box-sizing: border-box;
+                               "
+                               required>
+
+
+
+                        <br>
+                        <br>
+
+
+
+                        <button type="submit">
+
+                            Simulate Version Upgrade
+
+                        </button>
+
+
+                    </form>
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- VULNERABILITY DETAILS -->
+                <!-- ================================================= -->
+
+                <div class="vulnerability-section">
+
+
+                    <h3>
+                        Vulnerability Details
+                    </h3>
+
+
+
+                    {% if result.vulnerabilities %}
+
+
+                        {% for vulnerability in result.vulnerabilities %}
+
+
+                        <div class="vulnerability-card">
+
+
+                            <h4>
+                                {{ vulnerability.id }}
+                            </h4>
+
+
+
+                            <p>
+
+                                <strong>
+                                    Summary:
+                                </strong>
+
+                                {{ vulnerability.summary }}
+
+                            </p>
+
+
+
+                            <p>
+
+                                <strong>
+                                    Severity:
+                                </strong>
+
+                                {{ vulnerability.severity }}
+
+                            </p>
+
+
+
+                            <p>
+
+                                <strong>
+                                    CVSS Score:
+                                </strong>
+
+                                {{ vulnerability.cvss_score }}
+
+                            </p>
+
+
+
+                            <p>
+
+                                <strong>
+                                    Fixed Version:
+                                </strong>
+
+                                {{ vulnerability.fixed_version }}
+
+                            </p>
+
+
+
+                            {% if vulnerability.malware_detected %}
+
+
+                            <p>
+
+                                <strong>
+                                    Supply Chain / Malware Indicator:
+                                </strong>
+
+                                Detected
+
+                            </p>
+
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        {% endfor %}
+
+
+
+                    {% else %}
+
+
+                        <div class="safe-message">
+
+                            No known vulnerabilities found.
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+
+        {% else %}
+
+
+            <div class="safe-message">
+
+                No dependency analysis results available.
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- DEPENDENCY GRAPH -->
+    <!-- ================================================= -->
+
+    <section class="graph-section">
+
+
+        <h2>
+            Dependency Graph
+        </h2>
+
+
+        <div id="dependency-graph"
+             class="visual-graph">
+
+        </div>
+
+
+        <div class="graph-explanation">
+
+
+            <h3>
+                Graph Explanation
+            </h3>
+
+
+            <p>
+
+                The dependency graph represents
+                relationships between the project,
+                direct dependencies and transitive
+                dependencies.
+
+                Vulnerable dependencies are highlighted
+                to support impact analysis and
+                remediation prioritization.
+
+            </p>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- FOOTER -->
+    <!-- ================================================= -->
+
+    <footer class="dashboard-footer">
+
+
+        <p>
+
+            VulnGraph -
+
+            Risk and Trust-Aware Software
+            Dependency Security Analysis
+
+        </p>
+
+
+    </footer>
+
+
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- GRAPH DATA -->
+<!-- ================================================= -->
+
+<script>
+
+    const graphData = {{ graph | tojson }};
+
+</script>
+
+
+
+<script src="{{ url_for('static',
+                        filename='js/script.js') }}">
+</script>
+
+
+</body>
+
+</html>

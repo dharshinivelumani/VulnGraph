@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VulnGraph | Dependency Scanner</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body class="upload-page">
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="cyber-background">
+
+        <div class="grid-overlay"></div>
+
+        <div class="glow glow-one"></div>
+
+        <div class="glow glow-two"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="upload-header">
+
+        <div class="header-brand">
+
+            <div class="small-shield">
+
+                <span>V</span>
+
+            </div>
+
+
+            <div>
+
+                <div class="header-brand-name">
+                    VulnGraph
+                </div>
+
+                <div class="header-brand-subtitle">
+                    Dependency Security Intelligence
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <a href="{{ url_for('logout') }}"
+           class="header-logout">
+
+            Logout
+
+        </a>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="upload-container">
+
+
+        <!-- =================================================
+             INTRO
+        ================================================== -->
+
+        <section class="upload-intro">
+
+
+            <div class="large-shield">
+
+                <div class="shield-check">
+                    ✓
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="eyebrow">
+                    SOFTWARE SUPPLY CHAIN SECURITY
+                </div>
+
+
+                <h1>
+                    Analyze Your Dependencies
+                </h1>
+
+
+                <p>
+                    Upload your project's dependency file to identify
+                    vulnerabilities, assess risk, verify package trust,
+                    and generate security recommendations.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             UPLOAD CARD
+        ================================================== -->
+
+        <section class="upload-card">
+
+
+            <!-- CARD HEADER -->
+
+            <div class="upload-card-header">
+
+                <div>
+
+                    <h2>
+                        Dependency File Analysis
+                    </h2>
+
+
+                    <p>
+                        Select a dependency manifest to begin security analysis.
+                    </p>
+
+                </div>
+
+
+                <div class="analysis-status">
+
+                    <span></span>
+
+                    Security Engine Ready
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 UPLOAD FORM
+            ================================================== -->
+
+            <form method="POST"
+
+                  action="{{ url_for('upload') }}"
+
+                  enctype="multipart/form-data"
+
+                  class="upload-form">
+
+
+                <!-- =================================================
+                     DROP / SELECT AREA
+                ================================================== -->
+
+                <div class="drop-zone"
+                     id="dropZone">
+
+
+                    <!-- ICON -->
+
+                    <div class="upload-icon">
+
+                        ↑
+
+                    </div>
+
+
+
+                    <!-- TITLE -->
+
+                    <div class="drop-title">
+
+                        Select dependency file
+
+                    </div>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="drop-description">
+
+                        Click here to browse your project files
+
+                    </div>
+
+
+
+                    <!-- SUPPORTED FORMATS -->
+
+                    <div class="file-types">
+
+                        Supported formats:
+
+                    </div>
+
+
+
+                    <div class="format-list">
+
+                        <span>
+                            package.json
+                        </span>
+
+                        <span>
+                            package-lock.json
+                        </span>
+
+                        <span>
+                            requirements.txt
+                        </span>
+
+                        <span>
+                            pom.xml
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- ACTUAL FILE INPUT -->
+
+                    <input type="file"
+
+                           id="dependency-file"
+
+                           name="file"
+
+                           accept=".json,.txt,.xml"
+
+                           hidden
+
+                           required>
+
+
+
+                    <!-- SELECTED FILE -->
+
+                    <div id="selected-file"
+                         class="selected-file">
+
+                        No file selected
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     ANALYZE BUTTON
+                ================================================== -->
+
+                <button type="submit"
+                        class="analyze-button">
+
+
+                    <span class="analyze-icon">
+
+                        ◉
+
+                    </span>
+
+
+                    Analyze Dependencies
+
+
+                    <span>
+
+                        →
+
+                    </span>
+
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- =================================================
+                 ANALYSIS FEATURES
+            ================================================== -->
+
+            <div class="analysis-features">
+
+
+                <!-- FEATURE 1 -->
+
+                <div class="feature-item">
+
+
+                    <div class="feature-icon">
+
+                        ◈
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Vulnerability Detection
+                        </strong>
+
+
+                        <span>
+                            Known security vulnerabilities
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- FEATURE 2 -->
+
+                <div class="feature-item">
+
+
+                    <div class="feature-icon">
+
+                        ◉
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Risk Assessment
+                        </strong>
+
+
+                        <span>
+                            Risk, exposure and criticality
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- FEATURE 3 -->
+
+                <div class="feature-item">
+
+
+                    <div class="feature-icon">
+
+                        ✓
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Trust Analysis
+                        </strong>
+
+
+                        <span>
+                            Package health and maintenance
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- FEATURE 4 -->
+
+                <div class="feature-item">
+
+
+                    <div class="feature-icon">
+
+                        ⌘
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Dependency Graph
+                        </strong>
+
+
+                        <span>
+                            Direct and transitive relationships
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             SECURITY FOOTER
+        ================================================== -->
+
+        <div class="upload-security-footer">
+
+
+            <span class="footer-lock">
+
+                🔒
+
+            </span>
+
+
+            Files are analyzed securely within the VulnGraph environment.
+
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FILE UPLOAD JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+
+        const dropZone =
+            document.getElementById("dropZone");
+
+
+        const fileInput =
+            document.getElementById("dependency-file");
+
+
+        const selectedFile =
+            document.getElementById("selected-file");
+
+
+
+        /*
+         * CLICK UPLOAD AREA
+         */
+
+        dropZone.addEventListener(
+            "click",
+            function () {
+
+                fileInput.click();
+
+            }
+        );
+
+
+
+        /*
+         * FILE SELECTED
+         */
+
+        fileInput.addEventListener(
+            "change",
+            function () {
+
+                if (
+                    this.files &&
+                    this.files.length > 0
+                ) {
+
+                    const fileName =
+                        this.files[0].name;
+
+
+                    selectedFile.textContent =
+                        "Selected: " + fileName;
+
+
+                    selectedFile.classList.add(
+                        "file-selected"
+                    );
+
+                }
+
+                else {
+
+                    selectedFile.textContent =
+                        "No file selected";
+
+
+                    selectedFile.classList.remove(
+                        "file-selected"
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /*
+         * DRAG OVER
+         */
+
+        dropZone.addEventListener(
+            "dragover",
+            function (event) {
+
+                event.preventDefault();
+
+
+                dropZone.style.borderColor =
+                    "#38bdf8";
+
+
+                dropZone.style.background =
+                    "rgba(14, 165, 233, 0.05)";
+
+            }
+        );
+
+
+
+        /*
+         * DRAG LEAVE
+         */
+
+        dropZone.addEventListener(
+            "dragleave",
+            function () {
+
+                dropZone.style.borderColor =
+                    "";
+
+
+                dropZone.style.background =
+                    "";
+
+            }
+        );
+
+
+
+        /*
+         * DROP FILE
+         */
+
+        dropZone.addEventListener(
+            "drop",
+            function (event) {
+
+                event.preventDefault();
+
+
+                dropZone.style.borderColor =
+                    "";
+
+
+                dropZone.style.background =
+                    "";
+
+
+                const files =
+                    event.dataTransfer.files;
+
+
+                if (
+                    files &&
+                    files.length > 0
+                ) {
+
+                    try {
+
+                        fileInput.files =
+                            files;
+
+                    }
+
+                    catch (error) {
+
+                        console.log(
+                            "Unable to assign dropped file:",
+                            error
+                        );
+
+                    }
+
+
+                    const fileName =
+                        files[0].name;
+
+
+                    selectedFile.textContent =
+                        "Selected: " + fileName;
+
+
+                    selectedFile.classList.add(
+                        "file-selected"
+                    );
+
+                }
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
