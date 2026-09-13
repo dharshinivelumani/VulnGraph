@@ -29,13 +29,9 @@ from modules.trust_engine import (
 )
 
 from modules.graph_engine import build_dependency_graph
-
 from modules.recommendation import generate_recommendation
-
 from modules.simulator import simulate_version_change
-
 from modules.explainability import generate_explanation
-
 from modules.report_generator import generate_security_report
 
 
@@ -63,11 +59,8 @@ app.secret_key = os.environ.get(
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 app.config["SESSION_COOKIE_HTTPONLY"] = True
-
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-
 app.config["SESSION_COOKIE_SECURE"] = False
-
 app.config["SESSION_COOKIE_DOMAIN"] = None
 
 
@@ -91,7 +84,6 @@ VULNGRAPH_PASSWORD = os.environ.get(
 # =========================================================
 
 MAX_LOGIN_ATTEMPTS = 5
-
 LOGIN_ATTEMPT_WINDOW = 5 * 60
 
 login_attempts = {}
@@ -121,10 +113,15 @@ os.makedirs(
 # =========================================================
 # UPLOAD CONFIGURATION
 # =========================================================
+# Store temporary uploads outside OneDrive.
+# This helps avoid Windows/OneDrive file-lock issues.
 
 UPLOAD_FOLDER = os.path.join(
-    BASE_DIR,
-    "uploads"
+    os.environ.get(
+        "TEMP",
+        os.path.expanduser("~")
+    ),
+    "VulnGraphUploads"
 )
 
 os.makedirs(
@@ -653,6 +650,77 @@ def index():
 
 
 # =========================================================
+# TEMPORARY FOLDER CLEANUP
+# =========================================================
+
+def cleanup_temp_folder(
+    path,
+    retries=5
+):
+
+    if not path:
+        return True
+
+    for attempt in range(
+        retries
+    ):
+
+        try:
+
+            if not os.path.exists(
+                path
+            ):
+
+                return True
+
+            shutil.rmtree(
+                path,
+                ignore_errors=False
+            )
+
+            print(
+                f"Temporary folder cleaned: {path}"
+            )
+
+            return True
+
+        except PermissionError as error:
+
+            print(
+                f"Cleanup attempt "
+                f"{attempt + 1}/{retries} failed: "
+                f"{error}"
+            )
+
+            time.sleep(
+                0.5 * (
+                    attempt + 1
+                )
+            )
+
+        except FileNotFoundError:
+
+            return True
+
+        except Exception as error:
+
+            print(
+                "Temporary cleanup error:",
+                error
+            )
+
+            return False
+
+    print(
+        "WARNING: Temporary folder could not "
+        "be removed after multiple attempts:",
+        path
+    )
+
+    return False
+
+
+# =========================================================
 # UPLOAD + SECURITY ANALYSIS
 # =========================================================
 
@@ -892,9 +960,7 @@ def upload():
             else:
 
                 dependencies = []
-
                 relationships = []
-
                 dependency_versions = {}
 
         elif isinstance(
@@ -920,9 +986,7 @@ def upload():
         else:
 
             dependencies = []
-
             relationships = []
-
             dependency_versions = {}
 
         # -------------------------------------------------
@@ -1336,10 +1400,6 @@ def upload():
 
             # ---------------------------------------------
             # RECOMMENDATION
-            #
-            # IMPORTANT:
-            # Correct argument order for
-            # generate_recommendation()
             # ---------------------------------------------
 
             try:
@@ -1625,52 +1685,9 @@ def upload():
         # TEMPORARY FILE CLEANUP
         # -------------------------------------------------
 
-        if temporary_folder:
-
-            try:
-
-                if os.path.exists(
-                    temporary_folder
-                ):
-
-                    shutil.rmtree(
-                        temporary_folder
-                    )
-
-            except PermissionError as cleanup_error:
-
-                print(
-                    "Temporary file cleanup permission error:",
-                    cleanup_error
-                )
-
-                try:
-
-                    time.sleep(
-                        0.2
-                    )
-
-                    if os.path.exists(
-                        temporary_folder
-                    ):
-
-                        shutil.rmtree(
-                            temporary_folder
-                        )
-
-                except Exception as retry_error:
-
-                    print(
-                        "Temporary file cleanup retry error:",
-                        retry_error
-                    )
-
-            except Exception as cleanup_error:
-
-                print(
-                    "Temporary file cleanup error:",
-                    cleanup_error
-                )
+        cleanup_temp_folder(
+            temporary_folder
+        )
 
 
 # =========================================================
