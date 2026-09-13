@@ -1,6 +1,7 @@
 /* ============================================================
    VULNGRAPH SECURITY OPERATIONS DASHBOARD
    UI ONLY
+   LOGO ENABLED
 ============================================================ */
 
 * {
@@ -52,6 +53,7 @@ button {
 .vg-app {
     min-height: 100vh;
     display: flex;
+
     background:
         linear-gradient(
             180deg,
@@ -93,7 +95,9 @@ button {
 }
 
 
-/* BRAND */
+/* ============================================================
+   BRAND
+============================================================ */
 
 .vg-brand {
     display: flex;
@@ -102,31 +106,52 @@ button {
     padding: 0 8px;
 }
 
-.vg-brand-logo {
-    width: 52px;
-    height: 52px;
 
-    display: grid;
-    place-items: center;
+/* ============================================================
+   ACTUAL VULNGRAPH LOGO
+   Image:
+   static/images/vulngraph-logo.png
+============================================================ */
+
+.vg-brand-logo {
+    width: 58px;
+    height: 58px;
+
+    flex-shrink: 0;
+
+    display: block;
 
     border-radius: 14px;
 
-    background:
-        linear-gradient(
-            145deg,
-            #0c6aa5,
-            #062944
-        );
+    background-color: #061a2d;
+
+    background-image:
+        url("../images/vulngraph-logo.png");
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 
     border: 1px solid #168ddd;
 
-    color: #62c9ff;
-    font-size: 17px;
-    font-weight: 900;
+    color: transparent;
+    font-size: 0;
+
+    overflow: hidden;
 
     box-shadow:
-        0 0 25px rgba(0, 153, 255, .16);
+        0 0 25px rgba(0, 153, 255, .18),
+        0 0 45px rgba(0, 130, 255, .08);
 }
+
+
+/* remove old VG text */
+
+.vg-brand-logo::before,
+.vg-brand-logo::after {
+    display: none;
+}
+
 
 .vg-brand-text h1 {
     font-size: 21px;
@@ -136,14 +161,18 @@ button {
 
 .vg-brand-text span {
     display: block;
+
     margin-top: 6px;
 
     font-size: 11px;
+
     color: #26aef4;
 }
 
 
-/* ENGINE STATUS */
+/* ============================================================
+   ENGINE STATUS
+============================================================ */
 
 .vg-engine-status {
     margin: 25px 0 28px;
@@ -156,10 +185,12 @@ button {
     background: rgba(4, 30, 50, .75);
 
     color: #a8c9e5;
+
     font-size: 12px;
 
     display: flex;
     align-items: center;
+
     gap: 10px;
 }
 
@@ -167,14 +198,20 @@ button {
     width: 8px;
     height: 8px;
 
+    flex-shrink: 0;
+
     border-radius: 50%;
+
     background: #11dca2;
 
-    box-shadow: 0 0 10px rgba(17, 220, 162, .8);
+    box-shadow:
+        0 0 10px rgba(17, 220, 162, .8);
 }
 
 
-/* NAV */
+/* ============================================================
+   NAVIGATION
+============================================================ */
 
 .vg-navigation {
     display: flex;
@@ -203,11 +240,13 @@ button {
 
     display: flex;
     align-items: center;
+
     gap: 18px;
 
     padding: 0 12px;
 
     border: 1px solid transparent;
+
     border-radius: 8px;
 
     color: #a8c9e5;
@@ -217,7 +256,8 @@ button {
     transition:
         background .2s ease,
         border .2s ease,
-        color .2s ease;
+        color .2s ease,
+        transform .2s ease;
 }
 
 .vg-nav-item b {
@@ -226,13 +266,18 @@ button {
     color: #4b7b9c;
 
     font-size: 9px;
+
     letter-spacing: .5px;
 }
 
 .vg-nav-item:hover {
     color: #e9f7ff;
+
     background: rgba(0, 117, 201, .12);
+
     border-color: #124a70;
+
+    transform: translateX(2px);
 }
 
 .vg-nav-item.active {
@@ -257,7 +302,9 @@ button {
 }
 
 
-/* SIDEBAR BOTTOM */
+/* ============================================================
+   SIDEBAR BOTTOM
+============================================================ */
 
 .vg-sidebar-bottom {
     margin-top: auto;
@@ -268,6 +315,7 @@ button {
 
     display: flex;
     align-items: center;
+
     gap: 12px;
 }
 
@@ -279,22 +327,29 @@ button {
     place-items: center;
 
     border: 1px solid #14547c;
+
     border-radius: 9px;
 
     background: #072844;
+
     color: #00b9ff;
+
+    font-size: 12px;
 }
 
 .vg-sidebar-bottom strong {
     display: block;
+
     font-size: 12px;
 }
 
 .vg-sidebar-bottom small {
     display: block;
+
     margin-top: 4px;
 
     font-size: 9px;
+
     color: #5682a2;
 }
 
@@ -305,7 +360,9 @@ button {
 
 .vg-main {
     margin-left: 292px;
+
     width: calc(100% - 292px);
+
     min-height: 100vh;
 }
 
@@ -337,6 +394,7 @@ button {
     color: #3d89b5;
 
     font-size: 9px;
+
     font-weight: 800;
 
     letter-spacing: 1.4px;
@@ -346,26 +404,31 @@ button {
 
 .vg-topbar h2 {
     font-size: 18px;
+
     color: #edf7ff;
 }
 
 .vg-top-actions {
     display: flex;
     align-items: center;
+
     gap: 10px;
 }
 
 .vg-system-status {
     display: flex;
     align-items: center;
+
     gap: 8px;
 
     padding: 9px 14px;
 
     border: 1px solid #124461;
+
     border-radius: 20px;
 
     color: #b8d5e9;
+
     font-size: 10px;
 }
 
@@ -376,6 +439,7 @@ button {
     border-radius: 50%;
 
     background: #10dca0;
+
     box-shadow: 0 0 9px #10dca0;
 }
 
@@ -386,17 +450,23 @@ button {
     border-radius: 8px;
 
     font-size: 11px;
+
     font-weight: 700;
 
     border: 1px solid #164666;
 
     background: #071b2e;
+
     color: #9ec2de;
+
+    transition: .2s ease;
 }
 
 .vg-report-btn {
     background: #08a7e8;
+
     border-color: #0bc2ff;
+
     color: white;
 
     box-shadow:
@@ -405,10 +475,14 @@ button {
 
 .vg-report-btn:hover {
     background: #0bb8f5;
+
+    transform: translateY(-1px);
 }
 
 .vg-logout-btn:hover {
     background: #0b263e;
+
+    color: white;
 }
 
 
@@ -420,6 +494,7 @@ button {
     padding: 18px 25px 30px;
 
     max-width: 1500px;
+
     margin: auto;
 }
 
@@ -438,6 +513,7 @@ button {
     justify-content: space-between;
 
     border: 1px solid #123c5b;
+
     border-radius: 11px;
 
     background:
@@ -471,46 +547,71 @@ button {
     border: 1px solid rgba(0, 157, 255, .13);
 
     border-radius: 50%;
+
+    pointer-events: none;
 }
 
 .vg-welcome-left {
     display: flex;
     align-items: center;
+
     gap: 17px;
 
     position: relative;
+
     z-index: 2;
 }
 
+
+/* ============================================================
+   WELCOME LOGO
+============================================================ */
+
 .vg-welcome-logo {
-    width: 58px;
-    height: 58px;
+    width: 68px;
+    height: 68px;
 
-    border-radius: 50%;
+    flex-shrink: 0;
 
-    display: grid;
-    place-items: center;
+    display: block;
+
+    border-radius: 16px;
+
+    background-color: #061a2d;
+
+    background-image:
+        url("../images/vulngraph-logo.png");
+
+    background-repeat: no-repeat;
+
+    background-position: center;
+
+    background-size: contain;
 
     border: 1px solid #147db8;
 
-    background:
-        radial-gradient(
-            circle,
-            #104e7b,
-            #06233c
-        );
+    color: transparent;
 
-    color: #75d4ff;
-    font-weight: 900;
+    font-size: 0;
+
+    overflow: hidden;
 
     box-shadow:
-        0 0 22px rgba(0, 148, 255, .15);
+        0 0 22px rgba(0, 148, 255, .18),
+        0 0 40px rgba(0, 120, 255, .08);
 }
+
+.vg-welcome-logo::before,
+.vg-welcome-logo::after {
+    display: none;
+}
+
 
 .vg-kicker {
     color: #00b9ff;
 
     font-size: 9px;
+
     font-weight: 900;
 
     letter-spacing: 1.5px;
@@ -520,11 +621,13 @@ button {
 
 .vg-welcome h1 {
     font-size: 21px;
+
     margin-bottom: 7px;
 }
 
 .vg-welcome p {
     font-size: 11px;
+
     color: #7fa7c5;
 }
 
@@ -534,11 +637,13 @@ button {
     padding: 13px;
 
     border: 1px solid #174462;
+
     border-radius: 8px;
 
     background: rgba(1, 17, 30, .65);
 
     position: relative;
+
     z-index: 3;
 }
 
@@ -546,9 +651,11 @@ button {
     display: block;
 
     font-size: 8px;
+
     font-weight: 800;
 
     letter-spacing: 1.2px;
+
     color: #477e9f;
 
     margin-bottom: 7px;
@@ -558,6 +665,7 @@ button {
     display: block;
 
     font-size: 11px;
+
     color: #edf7ff;
 }
 
@@ -569,6 +677,7 @@ button {
     color: #00b8f5;
 
     font-size: 8px;
+
     font-weight: 800;
 }
 
@@ -594,6 +703,7 @@ button {
     padding: 17px;
 
     border: 1px solid #143b59;
+
     border-left: 2px solid #079ef0;
 
     border-radius: 9px;
@@ -606,7 +716,18 @@ button {
         );
 
     position: relative;
+
     overflow: hidden;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+.vg-kpi:hover {
+    transform: translateY(-2px);
+
+    border-color: #20587d;
 }
 
 .vg-kpi::after {
@@ -623,6 +744,10 @@ button {
     border-radius: 50%;
 
     background: rgba(0, 139, 230, .07);
+}
+
+.vg-kpi-blue {
+    border-left-color: #079ef0;
 }
 
 .vg-kpi-red {
@@ -649,6 +774,7 @@ button {
     place-items: center;
 
     border: 1px solid #0b5c88;
+
     border-radius: 8px;
 
     background: #062541;
@@ -656,6 +782,7 @@ button {
     color: #36b9f5;
 
     font-size: 9px;
+
     font-weight: 900;
 
     margin-bottom: 11px;
@@ -663,25 +790,33 @@ button {
 
 .vg-kpi-red .vg-kpi-icon {
     color: #ff506c;
+
     border-color: #713049;
+
     background: #28172a;
 }
 
 .vg-kpi-yellow .vg-kpi-icon {
     color: #ffc42c;
+
     border-color: #695222;
+
     background: #27241a;
 }
 
 .vg-kpi-green .vg-kpi-icon {
     color: #00e1a1;
+
     border-color: #075e5a;
+
     background: #072a2d;
 }
 
 .vg-kpi-critical .vg-kpi-icon {
     color: #ff3658;
+
     border-color: #6b2a45;
+
     background: #291728;
 }
 
@@ -697,6 +832,7 @@ button {
     display: block;
 
     font-size: 28px;
+
     line-height: 1.2;
 
     margin: 4px 0 7px;
@@ -706,6 +842,7 @@ button {
 
 .vg-kpi small {
     color: #467795;
+
     font-size: 9px;
 }
 
@@ -732,6 +869,7 @@ button {
 
 .vg-panel {
     border: 1px solid #143a57;
+
     border-radius: 10px;
 
     background:
@@ -772,6 +910,7 @@ button {
     color: #13b6f7;
 
     font-size: 8px;
+
     font-weight: 900;
 
     margin-bottom: 10px;
@@ -779,6 +918,7 @@ button {
 
 .vg-panel-header h3 {
     font-size: 14px;
+
     color: #eaf5ff;
 }
 
@@ -811,6 +951,7 @@ button {
     border-radius: 20px;
 
     font-size: 8px;
+
     font-weight: 800;
 }
 
@@ -818,11 +959,15 @@ button {
     min-height: 170px;
 
     border: 1px dashed #17628b;
+
     border-radius: 8px;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
     text-align: center;
@@ -836,6 +981,7 @@ button {
     height: 43px;
 
     display: grid;
+
     place-items: center;
 
     border-radius: 50%;
@@ -873,18 +1019,25 @@ button {
     color: white;
 
     font-size: 9px;
+
     font-weight: 800;
+
+    transition: .2s ease;
 }
 
 .vg-upload-btn:hover {
     background: #0bb7fa;
+
+    transform: translateY(-1px);
 }
 
 .vg-current-target {
     margin-top: 12px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     color: #4c7d9b;
@@ -909,7 +1062,9 @@ button {
     min-height: 215px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     gap: 24px;
@@ -918,6 +1073,8 @@ button {
 .vg-donut {
     width: 135px;
     height: 135px;
+
+    flex-shrink: 0;
 
     border-radius: 50%;
 
@@ -932,6 +1089,7 @@ button {
     position: relative;
 
     display: grid;
+
     place-items: center;
 }
 
@@ -977,7 +1135,8 @@ button {
 .vg-risk-list div {
     display: grid;
 
-    grid-template-columns: 10px 1fr auto;
+    grid-template-columns:
+        10px 1fr auto;
 
     align-items: center;
 
@@ -1026,6 +1185,7 @@ button {
     min-height: 215px;
 
     display: flex;
+
     align-items: center;
 
     gap: 25px;
@@ -1034,6 +1194,8 @@ button {
 .vg-trust-donut {
     width: 135px;
     height: 135px;
+
+    flex-shrink: 0;
 
     border-radius: 50%;
 
@@ -1044,6 +1206,7 @@ button {
         );
 
     display: grid;
+
     place-items: center;
 
     position: relative;
@@ -1070,11 +1233,13 @@ button {
 
 .vg-trust-donut strong {
     display: block;
+
     font-size: 21px;
 }
 
 .vg-trust-donut span {
     color: #6186a3;
+
     font-size: 8px;
 }
 
@@ -1099,6 +1264,7 @@ button {
     display: block;
 
     width: var(--trust);
+
     height: 100%;
 
     background: #17d19f;
@@ -1110,7 +1276,9 @@ button {
 
 .vg-trust-info small {
     margin-left: 5px;
+
     color: #5f86a2;
+
     font-size: 8px;
 }
 
@@ -1120,6 +1288,7 @@ button {
     color: #5f86a2;
 
     font-size: 8px;
+
     line-height: 1.5;
 }
 
@@ -1152,9 +1321,11 @@ button {
 
     display: grid;
 
-    grid-template-columns: 35px 1fr auto;
+    grid-template-columns:
+        35px 1fr auto;
 
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows:
+        1fr 1fr;
 
     align-items: center;
 
@@ -1172,6 +1343,7 @@ button {
     border-radius: 50%;
 
     display: grid;
+
     place-items: center;
 
     font-size: 11px;
@@ -1183,6 +1355,7 @@ button {
 
 .vg-severity-card span {
     color: #6688a2;
+
     font-size: 8px;
 }
 
@@ -1192,6 +1365,7 @@ button {
 
 .vg-severity-card.critical > div {
     background: rgba(255, 39, 74, .15);
+
     color: #ff405d;
 }
 
@@ -1201,6 +1375,7 @@ button {
 
 .vg-severity-card.high > div {
     background: rgba(255, 118, 37, .15);
+
     color: #ff8d48;
 }
 
@@ -1210,6 +1385,7 @@ button {
 
 .vg-severity-card.medium > div {
     background: rgba(255, 184, 23, .15);
+
     color: #ffc83e;
 }
 
@@ -1219,6 +1395,7 @@ button {
 
 .vg-severity-card.low > div {
     background: rgba(16, 206, 155, .15);
+
     color: #16dfa9;
 }
 
@@ -1260,15 +1437,22 @@ button {
     font-size: 9px;
 
     cursor: pointer;
+
+    transition: .2s ease;
 }
 
 .vg-full-graph-btn:hover {
     color: white;
+
     border-color: #0b79b5;
+
+    background: #09263e;
 }
 
 
-/* Recent */
+/* ============================================================
+   RECENT ANALYSIS
+============================================================ */
 
 .vg-view-all {
     color: #0bb5f7;
@@ -1285,7 +1469,8 @@ button {
 
     display: grid;
 
-    grid-template-columns: 30px 1fr auto;
+    grid-template-columns:
+        30px 1fr auto;
 
     align-items: center;
 
@@ -1299,6 +1484,7 @@ button {
     height: 25px;
 
     display: grid;
+
     place-items: center;
 
     border-radius: 5px;
@@ -1336,6 +1522,7 @@ button {
 
 .vg-analysis-row small {
     color: #5e829d;
+
     font-size: 8px;
 }
 
@@ -1358,7 +1545,9 @@ button {
 
 .vg-dependency-list {
     display: flex;
+
     flex-direction: column;
+
     gap: 10px;
 }
 
@@ -1375,11 +1564,23 @@ button {
             rgba(5, 28, 45, .9),
             rgba(3, 20, 33, .9)
         );
+
+    transition:
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.vg-dependency-card:hover {
+    border-color: #20597d;
+
+    transform: translateY(-1px);
 }
 
 .vg-dependency-top {
     display: flex;
+
     justify-content: space-between;
+
     align-items: flex-start;
 
     gap: 15px;
@@ -1387,6 +1588,7 @@ button {
 
 .vg-dependency-top h4 {
     font-size: 14px;
+
     color: #eaf6ff;
 }
 
@@ -1406,24 +1608,31 @@ button {
     border-radius: 15px;
 
     font-size: 8px;
+
     font-weight: 800;
 }
 
 .vg-risk-badge.danger {
     color: #ff4865;
+
     border: 1px solid #6b2940;
+
     background: rgba(255, 35, 70, .09);
 }
 
 .vg-risk-badge.warning {
     color: #ffbc29;
+
     border: 1px solid #6a5421;
+
     background: rgba(255, 184, 23, .08);
 }
 
 .vg-risk-badge.safe {
     color: #16d9a4;
+
     border: 1px solid #126452;
+
     background: rgba(0, 215, 153, .07);
 }
 
@@ -1466,6 +1675,7 @@ button {
 
 .vg-dependency-meta strong {
     font-size: 10px;
+
     color: #cbe5f5;
 }
 
@@ -1473,7 +1683,9 @@ button {
     margin-top: 12px;
 
     display: flex;
+
     flex-direction: column;
+
     gap: 6px;
 }
 
@@ -1481,6 +1693,7 @@ button {
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
     gap: 10px;
@@ -1512,6 +1725,7 @@ button {
     border-radius: 12px;
 
     font-size: 7px;
+
     font-weight: 800;
 
     text-transform: uppercase;
@@ -1519,21 +1733,25 @@ button {
 
 .vg-vuln-severity.critical {
     color: #ff4562;
+
     background: rgba(255, 37, 70, .12);
 }
 
 .vg-vuln-severity.high {
     color: #ff8845;
+
     background: rgba(255, 118, 37, .12);
 }
 
 .vg-vuln-severity.medium {
     color: #ffc234;
+
     background: rgba(255, 184, 23, .12);
 }
 
 .vg-vuln-severity.low {
     color: #13d8a2;
+
     background: rgba(16, 206, 155, .12);
 }
 
@@ -1551,6 +1769,7 @@ button {
     color: #0db7f7;
 
     font-size: 7px;
+
     font-weight: 900;
 
     letter-spacing: 1px;
@@ -1567,7 +1786,9 @@ button {
 }
 
 
-/* EMPTY */
+/* ============================================================
+   EMPTY
+============================================================ */
 
 .vg-empty-state {
     padding: 45px;
@@ -1575,6 +1796,7 @@ button {
     text-align: center;
 
     border: 1px dashed #174461;
+
     border-radius: 8px;
 
     color: #638aa5;
@@ -1618,6 +1840,7 @@ button {
     padding: 14px;
 
     border: 1px solid #12364f;
+
     border-radius: 7px;
 
     background: rgba(3, 19, 31, .7);
@@ -1664,6 +1887,7 @@ button {
     padding: 13px;
 
     border: 1px solid #123a56;
+
     border-radius: 8px;
 
     background: rgba(3, 20, 34, .7);
@@ -1711,6 +1935,7 @@ button {
     padding: 18px 25px 25px;
 
     display: flex;
+
     justify-content: space-between;
 
     border-top: 1px solid #102f46;
@@ -1723,17 +1948,20 @@ button {
 
 /* ============================================================
    EXISTING GRAPH COMPATIBILITY
-   script.js creates these elements.
+   DO NOT REMOVE
 ============================================================ */
 
 #dependency-graph {
     width: 100%;
+
     min-height: 235px;
 
     position: relative;
+
     overflow: hidden;
 
     border: 1px solid #123b58;
+
     border-radius: 8px;
 
     background:
@@ -1747,6 +1975,7 @@ button {
 
 .vg-graph {
     width: 100%;
+
     min-height: 100%;
 
     color: #dcefff;
@@ -1754,6 +1983,7 @@ button {
 
 .vg-toolbar {
     display: flex;
+
     justify-content: space-between;
 
     padding: 8px;
@@ -1774,6 +2004,8 @@ button {
     padding: 5px 9px;
 
     font-size: 8px;
+
+    cursor: pointer;
 }
 
 .vg-canvas {
@@ -1843,6 +2075,91 @@ button {
 
 
 /* ============================================================
+   GRAPH EXTRA VISUAL POLISH
+============================================================ */
+
+.vg-graph-title {
+    color: #eaf6ff !important;
+}
+
+.vg-graph-subtitle {
+    color: #638ca8 !important;
+}
+
+.vg-level-label {
+    color: #4e87ad !important;
+}
+
+.vg-relationship-heading {
+    color: #7fb1cf !important;
+}
+
+.vg-relationship-item {
+    border-color: #123750 !important;
+
+    background: rgba(4, 22, 36, .7) !important;
+}
+
+.vg-detail-item {
+    border-color: #123750 !important;
+
+    background: rgba(4, 22, 36, .7) !important;
+}
+
+.vg-details-header {
+    border-color: #123750 !important;
+}
+
+.vg-details-name {
+    color: #eaf6ff !important;
+}
+
+.vg-details-type {
+    color: #5f8aa8 !important;
+}
+
+.vg-risk-number {
+    color: #eaf6ff !important;
+}
+
+.vg-risk-mini {
+    color: #5f8aa8 !important;
+}
+
+.vg-warning-dot {
+    background: #ffb817 !important;
+}
+
+.vg-safe-check {
+    color: #16d9a4 !important;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+============================================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #020d18;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #16415f;
+
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1c628c;
+}
+
+
+/* ============================================================
    RESPONSIVE
 ============================================================ */
 
@@ -1855,6 +2172,7 @@ button {
 
     .vg-main {
         margin-left: 235px;
+
         width: calc(100% - 235px);
     }
 
@@ -1895,6 +2213,7 @@ button {
 
     .vg-main {
         margin-left: 0;
+
         width: 100%;
     }
 
@@ -1965,6 +2284,7 @@ button {
 
     .vg-workflow-steps {
         flex-direction: column;
+
         align-items: stretch;
     }
 
@@ -1998,6 +2318,17 @@ button {
 
     .vg-footer {
         flex-direction: column;
+
         gap: 5px;
+    }
+
+    .vg-brand-logo {
+        width: 50px;
+        height: 50px;
+    }
+
+    .vg-welcome-logo {
+        width: 60px;
+        height: 60px;
     }
 }
