@@ -8,6 +8,270 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <style>
+        /* =========================================================
+           WHAT-IF RISK SIMULATION
+           Added without changing existing dashboard styling.
+        ========================================================== */
+
+        .vg-simulation-section {
+            margin-top: 24px;
+        }
+
+        .vg-simulation-panel {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(24, 197, 245, 0.22);
+            border-radius: 14px;
+            background:
+                radial-gradient(
+                    circle at 90% 0%,
+                    rgba(24, 197, 245, 0.07),
+                    transparent 35%
+                ),
+                rgba(7, 14, 23, 0.96);
+        }
+
+        .vg-simulation-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #18c5f5,
+                transparent
+            );
+            opacity: 0.55;
+        }
+
+        .vg-simulation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .vg-simulation-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .vg-simulation-icon {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(24,197,245,0.28);
+            border-radius: 11px;
+            background: rgba(24,197,245,0.07);
+            color: #36d8ff;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .vg-simulation-title h3 {
+            margin: 0;
+            color: #edf7ff;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .vg-simulation-title p {
+            margin: 5px 0 0;
+            color: #6e8194;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .vg-simulation-badge {
+            padding: 7px 10px;
+            border: 1px solid rgba(24,197,245,0.2);
+            border-radius: 7px;
+            background: rgba(24,197,245,0.05);
+            color: #36d8ff;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .vg-simulation-body {
+            padding: 23px 24px;
+        }
+
+        .vg-simulation-form {
+            display: grid;
+            grid-template-columns: 1.3fr 0.8fr 0.8fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .vg-simulation-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .vg-simulation-field label {
+            color: #687b8f;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .vg-simulation-field input,
+        .vg-simulation-field select {
+            width: 100%;
+            height: 43px;
+            padding: 0 12px;
+            border: 1px solid #223344;
+            border-radius: 8px;
+            outline: none;
+            background: #071019;
+            color: #dce8f2;
+            font-size: 10px;
+            transition: 0.18s ease;
+        }
+
+        .vg-simulation-field input::placeholder {
+            color: #46586b;
+        }
+
+        .vg-simulation-field input:focus,
+        .vg-simulation-field select:focus {
+            border-color: rgba(24,197,245,0.5);
+            box-shadow: 0 0 0 3px rgba(24,197,245,0.06);
+        }
+
+        .vg-simulation-run {
+            height: 43px;
+            padding: 0 17px;
+            border: 1px solid rgba(24,197,245,0.35);
+            border-radius: 8px;
+            background: rgba(24,197,245,0.08);
+            color: #36d8ff;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.07em;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.18s ease;
+        }
+
+        .vg-simulation-run:hover {
+            border-color: rgba(24,197,245,0.65);
+            background: rgba(24,197,245,0.14);
+            transform: translateY(-1px);
+        }
+
+        .vg-simulation-help {
+            margin-top: 10px;
+            color: #4f6377;
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        .vg-simulation-flow {
+            display: grid;
+            grid-template-columns: 1fr 42px 1fr 42px 1fr;
+            align-items: center;
+            gap: 9px;
+            margin-top: 21px;
+        }
+
+        .vg-simulation-flow-card {
+            min-height: 110px;
+            padding: 15px;
+            border: 1px solid #1c2b39;
+            border-radius: 9px;
+            background: #071019;
+        }
+
+        .vg-simulation-flow-number {
+            color: #3e566b;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+        }
+
+        .vg-simulation-flow-card strong {
+            display: block;
+            margin-top: 8px;
+            color: #dce8f2;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .vg-simulation-flow-card p {
+            margin: 5px 0 0;
+            color: #5d7185;
+            font-size: 9px;
+            line-height: 1.55;
+        }
+
+        .vg-simulation-arrow {
+            color: #24c9f5;
+            font-size: 18px;
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .vg-simulation-result-note {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 17px;
+            padding: 11px 13px;
+            border-left: 2px solid #18c5f5;
+            background: rgba(24,197,245,0.035);
+            color: #6b8094;
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        .vg-simulation-result-note strong {
+            color: #9ab0c2;
+        }
+
+        @media (max-width: 1100px) {
+            .vg-simulation-form {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .vg-simulation-run {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .vg-simulation-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .vg-simulation-form {
+                grid-template-columns: 1fr;
+            }
+
+            .vg-simulation-flow {
+                grid-template-columns: 1fr;
+            }
+
+            .vg-simulation-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -28,7 +292,6 @@
                      xmlns="http://www.w3.org/2000/svg"
                      aria-label="VulnGraph Logo">
 
-                    <!-- Shield -->
                     <path
                         d="M50 7
                            L87 20
@@ -41,7 +304,6 @@
                         stroke="#18c5f5"
                         stroke-width="4"/>
 
-                    <!-- Inner shield -->
                     <path
                         d="M50 17
                            L77 27
@@ -54,7 +316,6 @@
                         stroke="#0b8fc7"
                         stroke-width="2"/>
 
-                    <!-- Dependency graph lines -->
                     <path
                         d="M28 49 L40 36 L55 45 L70 30"
                         fill="none"
@@ -70,7 +331,6 @@
                         stroke-width="2.5"
                         stroke-linecap="round"/>
 
-                    <!-- Graph nodes -->
                     <circle cx="28" cy="49" r="4.5"
                             fill="#19c5f5"/>
                     <circle cx="40" cy="36" r="4.5"
@@ -84,7 +344,6 @@
                     <circle cx="63" cy="63" r="4"
                             fill="#20d1f7"/>
 
-                    <!-- Security check -->
                     <path
                         d="M30 61 L43 74 L69 43"
                         fill="none"
@@ -103,12 +362,10 @@
 
         </div>
 
-
         <div class="vg-engine-status">
             <span class="vg-live-dot"></span>
             Analysis engine online
         </div>
-
 
         <nav class="vg-navigation">
 
@@ -146,12 +403,17 @@
                 <span>Risk Analysis</span>
             </a>
 
-            <a href="#workflow"
+            <a href="#simulation"
                class="vg-nav-item">
                 <b>06</b>
-                <span>Analysis Pipeline</span>
+                <span>What-If Risk Simulation</span>
             </a>
 
+            <a href="#workflow"
+               class="vg-nav-item">
+                <b>07</b>
+                <span>Analysis Pipeline</span>
+            </a>
 
             <div class="vg-nav-title vg-report-title">
                 REPORTING
@@ -170,7 +432,6 @@
             </a>
 
         </nav>
-
 
         <div class="vg-sidebar-bottom">
 
@@ -215,9 +476,6 @@
 
     <section class="vg-main">
 
-
-        <!-- TOP BAR -->
-
         <header class="vg-topbar">
 
             <div>
@@ -232,7 +490,6 @@
 
             </div>
 
-
             <div class="vg-top-actions">
 
                 <div class="vg-system-status">
@@ -242,17 +499,13 @@
 
                 <a href="{{ url_for('generate_report') }}"
                    class="vg-report-btn">
-
                     <span>PDF</span>
                     Generate Report
-
                 </a>
 
                 <a href="{{ url_for('logout') }}"
                    class="vg-logout-btn">
-
                     Logout
-
                 </a>
 
             </div>
@@ -260,24 +513,14 @@
         </header>
 
 
-        <!-- =====================================================
-             DASHBOARD CONTENT
-        ====================================================== -->
-
         <main class="vg-content">
 
-
-            <!-- =================================================
-                 WELCOME
-            ================================================== -->
+            <!-- WELCOME -->
 
             <section id="overview"
                      class="vg-welcome">
 
                 <div class="vg-welcome-left">
-
-
-                    <!-- LARGE VULNGRAPH LOGO -->
 
                     <div class="vg-welcome-logo vg-real-welcome-logo">
 
@@ -285,7 +528,6 @@
                              xmlns="http://www.w3.org/2000/svg"
                              aria-label="VulnGraph">
 
-                            <!-- Shield -->
                             <path
                                 d="M50 6
                                    L88 20
@@ -298,7 +540,6 @@
                                 stroke="#1bd1ff"
                                 stroke-width="4"/>
 
-                            <!-- Inner shield -->
                             <path
                                 d="M50 17
                                    L77 27
@@ -311,7 +552,6 @@
                                 stroke="#0ca8df"
                                 stroke-width="2"/>
 
-                            <!-- Graph -->
                             <path
                                 d="M27 49
                                    L40 35
@@ -333,38 +573,19 @@
                                 stroke-width="2.5"
                                 stroke-linecap="round"/>
 
-                            <!-- Nodes -->
-                            <circle cx="27"
-                                    cy="49"
-                                    r="4.5"
+                            <circle cx="27" cy="49" r="4.5"
                                     fill="#20c9f6"/>
-
-                            <circle cx="40"
-                                    cy="35"
-                                    r="4.5"
+                            <circle cx="40" cy="35" r="4.5"
                                     fill="#8beaff"/>
-
-                            <circle cx="55"
-                                    cy="45"
-                                    r="4.5"
+                            <circle cx="55" cy="45" r="4.5"
                                     fill="#16a9e1"/>
-
-                            <circle cx="72"
-                                    cy="28"
-                                    r="4.5"
+                            <circle cx="72" cy="28" r="4.5"
                                     fill="#a2efff"/>
-
-                            <circle cx="45"
-                                    cy="57"
-                                    r="4"
+                            <circle cx="45" cy="57" r="4"
                                     fill="#1cc6f3"/>
-
-                            <circle cx="63"
-                                    cy="64"
-                                    r="4"
+                            <circle cx="63" cy="64" r="4"
                                     fill="#25d6fa"/>
 
-                            <!-- Check -->
                             <path
                                 d="M29 61
                                    L43 75
@@ -378,7 +599,6 @@
                         </svg>
 
                     </div>
-
 
                     <div>
 
@@ -400,7 +620,6 @@
 
                 </div>
 
-
                 <div class="vg-target-box">
 
                     <span>
@@ -421,96 +640,37 @@
             </section>
 
 
-            <!-- =================================================
-                 KPI CARDS
-            ================================================== -->
+            <!-- KPI CARDS -->
 
             <section class="vg-kpi-grid">
 
-
                 <div class="vg-kpi vg-kpi-blue">
-
-                    <div class="vg-kpi-icon">
-                        DEP
-                    </div>
-
-                    <span>
-                        Total Dependencies
-                    </span>
-
-                    <strong>
-                        {{ total_dependencies | default(0) }}
-                    </strong>
-
-                    <small>
-                        Packages analyzed
-                    </small>
-
+                    <div class="vg-kpi-icon">DEP</div>
+                    <span>Total Dependencies</span>
+                    <strong>{{ total_dependencies | default(0) }}</strong>
+                    <small>Packages analyzed</small>
                 </div>
-
 
                 <div class="vg-kpi vg-kpi-red">
-
-                    <div class="vg-kpi-icon">
-                        !
-                    </div>
-
-                    <span>
-                        Vulnerable Dependencies
-                    </span>
-
-                    <strong>
-                        {{ vulnerable_dependencies | default(0) }}
-                    </strong>
-
-                    <small>
-                        Require investigation
-                    </small>
-
+                    <div class="vg-kpi-icon">!</div>
+                    <span>Vulnerable Dependencies</span>
+                    <strong>{{ vulnerable_dependencies | default(0) }}</strong>
+                    <small>Require investigation</small>
                 </div>
-
 
                 <div class="vg-kpi vg-kpi-yellow">
-
-                    <div class="vg-kpi-icon">
-                        CVE
-                    </div>
-
-                    <span>
-                        Total Vulnerabilities
-                    </span>
-
-                    <strong>
-                        {{ total_vulnerabilities | default(0) }}
-                    </strong>
-
-                    <small>
-                        Known findings
-                    </small>
-
+                    <div class="vg-kpi-icon">CVE</div>
+                    <span>Total Vulnerabilities</span>
+                    <strong>{{ total_vulnerabilities | default(0) }}</strong>
+                    <small>Known findings</small>
                 </div>
-
 
                 <div class="vg-kpi vg-kpi-green">
-
-                    <div class="vg-kpi-icon">
-                        RISK
-                    </div>
-
-                    <span>
-                        Average Risk Score
-                    </span>
-
-                    <strong>
-                        {{ "%.1f"|format(average_risk|default(0)) }}%
-                    </strong>
-
-                    <small>
-                        Calculated posture
-                    </small>
-
+                    <div class="vg-kpi-icon">RISK</div>
+                    <span>Average Risk Score</span>
+                    <strong>{{ "%.1f"|format(average_risk|default(0)) }}%</strong>
+                    <small>Calculated posture</small>
                 </div>
-
 
                 <div class="vg-kpi vg-kpi-critical">
 
@@ -555,12 +715,9 @@
             </section>
 
 
-            <!-- =================================================
-                 MAIN ANALYTICS GRID
-            ================================================== -->
+            <!-- MAIN ANALYTICS GRID -->
 
             <section class="vg-main-grid">
-
 
                 <!-- DEPENDENCY INTAKE -->
 
@@ -591,7 +748,6 @@
 
                     </div>
 
-
                     <div class="vg-upload-box">
 
                         <div class="vg-upload-icon">
@@ -609,13 +765,10 @@
 
                         <a href="/upload"
                            class="vg-upload-btn">
-
                             OPEN UPLOAD WORKSPACE
-
                         </a>
 
                     </div>
-
 
                     <div class="vg-current-target">
 
@@ -660,12 +813,10 @@
 
                     </div>
 
-
                     {% set critical_count = namespace(value=0) %}
                     {% set high_count = namespace(value=0) %}
                     {% set medium_count = namespace(value=0) %}
                     {% set low_count = namespace(value=0) %}
-
 
                     {% for item in results|default([]) %}
 
@@ -700,7 +851,6 @@
 
                     {% endfor %}
 
-
                     <div class="vg-risk-content">
 
                         <div class="vg-donut"
@@ -724,7 +874,6 @@
                             </div>
 
                         </div>
-
 
                         <div class="vg-risk-list">
 
@@ -784,9 +933,7 @@
 
                     </div>
 
-
                     {% set trusted_count = namespace(value=0) %}
-
 
                     {% for item in results|default([]) %}
 
@@ -804,7 +951,6 @@
 
                     {% endfor %}
 
-
                     {% if total_dependencies|default(0)|int > 0 %}
 
                         {% set trust_percent =
@@ -817,7 +963,6 @@
                         {% set trust_percent = 0 %}
 
                     {% endif %}
-
 
                     <div class="vg-trust-content">
 
@@ -837,7 +982,6 @@
                             </div>
 
                         </div>
-
 
                         <div class="vg-trust-info">
 
@@ -867,9 +1011,7 @@
             </section>
 
 
-            <!-- =================================================
-                 VULNERABILITY SUMMARY
-            ================================================== -->
+            <!-- VULNERABILITY SUMMARY -->
 
             <section id="vulnerabilities"
                      class="vg-panel vg-summary-panel">
@@ -894,66 +1036,30 @@
 
                 </div>
 
-
                 <div class="vg-severity-cards">
 
                     <div class="vg-severity-card critical">
-
                         <div>▲</div>
-
-                        <strong>
-                            {{ critical_count.value }}
-                        </strong>
-
-                        <span>
-                            Critical
-                        </span>
-
+                        <strong>{{ critical_count.value }}</strong>
+                        <span>Critical</span>
                     </div>
-
 
                     <div class="vg-severity-card high">
-
                         <div>●</div>
-
-                        <strong>
-                            {{ high_count.value }}
-                        </strong>
-
-                        <span>
-                            High
-                        </span>
-
+                        <strong>{{ high_count.value }}</strong>
+                        <span>High</span>
                     </div>
-
 
                     <div class="vg-severity-card medium">
-
                         <div>●</div>
-
-                        <strong>
-                            {{ medium_count.value }}
-                        </strong>
-
-                        <span>
-                            Medium
-                        </span>
-
+                        <strong>{{ medium_count.value }}</strong>
+                        <span>Medium</span>
                     </div>
 
-
                     <div class="vg-severity-card low">
-
                         <div>●</div>
-
-                        <strong>
-                            {{ low_count.value }}
-                        </strong>
-
-                        <span>
-                            Low
-                        </span>
-
+                        <strong>{{ low_count.value }}</strong>
+                        <span>Low</span>
                     </div>
 
                 </div>
@@ -961,14 +1067,9 @@
             </section>
 
 
-            <!-- =================================================
-                 GRAPH + RECENT ANALYSIS
-            ================================================== -->
+            <!-- GRAPH + RECENT ANALYSIS -->
 
             <section class="vg-bottom-grid">
-
-
-                <!-- GRAPH -->
 
                 <div id="graph"
                      class="vg-panel vg-graph-panel">
@@ -992,27 +1093,17 @@
 
                         </div>
 
-
                         <button type="button"
                                 class="vg-full-graph-btn">
-
                             ⛶ View Full Graph
-
                         </button>
 
                     </div>
-
-
-                    <!-- IMPORTANT:
-                         Existing script.js uses this ID.
-                    -->
 
                     <div id="dependency-graph"></div>
 
                 </div>
 
-
-                <!-- RECENT ANALYSIS -->
 
                 <div class="vg-panel vg-recent-panel">
 
@@ -1032,21 +1123,16 @@
 
                         <a href="#dependencies"
                            class="vg-view-all">
-
                             View All
-
                         </a>
 
                     </div>
-
 
                     <div class="vg-analysis-list">
 
                         <div class="vg-analysis-row">
 
-                            <div class="vg-file-icon">
-                                ▤
-                            </div>
+                            <div class="vg-file-icon">▤</div>
 
                             <div>
 
@@ -1066,12 +1152,9 @@
 
                         </div>
 
-
                         <div class="vg-analysis-row">
 
-                            <div class="vg-file-icon">
-                                ▤
-                            </div>
+                            <div class="vg-file-icon">▤</div>
 
                             <div>
 
@@ -1091,12 +1174,9 @@
 
                         </div>
 
-
                         <div class="vg-analysis-row">
 
-                            <div class="vg-file-icon">
-                                ▤
-                            </div>
+                            <div class="vg-file-icon">▤</div>
 
                             <div>
 
@@ -1116,12 +1196,9 @@
 
                         </div>
 
-
                         <div class="vg-analysis-row">
 
-                            <div class="vg-file-icon">
-                                ▤
-                            </div>
+                            <div class="vg-file-icon">▤</div>
 
                             <div>
 
@@ -1148,9 +1225,7 @@
             </section>
 
 
-            <!-- =================================================
-                 DEPENDENCY FINDINGS
-            ================================================== -->
+            <!-- DEPENDENCY FINDINGS -->
 
             <section id="dependencies"
                      class="vg-panel vg-findings-panel">
@@ -1182,7 +1257,6 @@
 
                 </div>
 
-
                 {% if results %}
 
                 <div class="vg-dependency-list">
@@ -1190,7 +1264,6 @@
                     {% for item in results %}
 
                     <article class="vg-dependency-card">
-
 
                         <div class="vg-dependency-top">
 
@@ -1205,7 +1278,6 @@
                                 </span>
 
                             </div>
-
 
                             <div class="
                                 vg-risk-badge
@@ -1226,78 +1298,47 @@
 
                         </div>
 
-
                         <div class="vg-dependency-meta">
 
                             <div>
-
-                                <span>
-                                    Declared
-                                </span>
-
+                                <span>Declared</span>
                                 <strong>
                                     {{ item.declared_version|default("—") }}
                                 </strong>
-
                             </div>
 
-
                             <div>
-
-                                <span>
-                                    Installed
-                                </span>
-
+                                <span>Installed</span>
                                 <strong>
                                     {{ item.installed_version|
                                        default(item.version|default("—")) }}
                                 </strong>
-
                             </div>
 
-
                             <div>
-
-                                <span>
-                                    Vulnerabilities
-                                </span>
-
+                                <span>Vulnerabilities</span>
                                 <strong>
                                     {{ item.vulnerability_count|default(0) }}
                                 </strong>
-
                             </div>
 
-
                             <div>
-
-                                <span>
-                                    Impact
-                                </span>
-
+                                <span>Impact</span>
                                 <strong>
                                     {{ item.impact_level|
                                        default(item.impact|default("—")) }}
                                 </strong>
-
                             </div>
 
-
                             <div>
-
-                                <span>
-                                    Trust
-                                </span>
-
+                                <span>Trust</span>
                                 <strong>
                                     {{ item.trust_score|
                                        default(item.trust|default("—")) }}
                                 </strong>
-
                             </div>
 
                         </div>
-
 
                         {% if item.vulnerabilities %}
 
@@ -1323,7 +1364,6 @@
 
                                 </div>
 
-
                                 <div class="
                                     vg-vuln-severity
                                     {{ vuln.severity|
@@ -1342,7 +1382,6 @@
                         </div>
 
                         {% endif %}
-
 
                         {% if item.recommendation %}
 
@@ -1366,7 +1405,6 @@
 
                 </div>
 
-
                 {% else %}
 
                 <div class="vg-empty-state">
@@ -1386,9 +1424,254 @@
             </section>
 
 
-            <!-- =================================================
-                 SECURITY INTERPRETATION
-            ================================================== -->
+            <!-- =========================================================
+                 WHAT-IF RISK SIMULATION
+            ========================================================== -->
+
+            <section id="simulation"
+                     class="vg-simulation-section">
+
+                <div class="vg-simulation-panel">
+
+                    <div class="vg-simulation-header">
+
+                        <div class="vg-simulation-title">
+
+                            <div class="vg-simulation-icon">
+                                🧪
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    What-If Risk Simulation
+                                </h3>
+
+                                <p>
+                                    Evaluate the security impact of changing
+                                    a dependency version before applying the
+                                    upgrade to the project.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="vg-simulation-badge">
+                            Core Decision Module
+                        </div>
+
+                    </div>
+
+
+                    <div class="vg-simulation-body">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('simulate') }}"
+                            class="vg-simulation-form"
+                        >
+
+                            <!-- =================================================
+                                 ADDED: ECOSYSTEM
+                                 This is the only addition.
+                            ================================================== -->
+
+                            <input
+                                type="hidden"
+                                name="ecosystem"
+                                value="{{ ecosystem|default('npm') }}"
+                            >
+
+                            <!-- DEPENDENCY -->
+
+                            <div class="vg-simulation-field">
+
+                                <label for="simulation-dependency">
+                                    Dependency
+                                </label>
+
+                                <select
+                                    id="simulation-dependency"
+                                    name="dependency"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select dependency
+                                    </option>
+
+                                    {% for item in results|default([]) %}
+
+                                    <option
+                                        value="{{ item.name }}"
+                                        data-version="{{ item.installed_version|default(item.version|default(item.declared_version|default(''))) }}"
+                                    >
+                                        {{ item.name }}
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- CURRENT VERSION -->
+
+                            <div class="vg-simulation-field">
+
+                                <label for="simulation-current-version">
+                                    Current Version
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="simulation-current-version"
+                                    name="current_version"
+                                    placeholder="e.g. 4.17.21"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- TARGET VERSION -->
+
+                            <div class="vg-simulation-field">
+
+                                <label for="simulation-target-version">
+                                    Target Version
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="simulation-target-version"
+                                    name="target_version"
+                                    placeholder="e.g. 4.18.0"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- RUN -->
+
+                            <button
+                                type="submit"
+                                class="vg-simulation-run"
+                            >
+                                RUN SIMULATION →
+                            </button>
+
+                        </form>
+
+
+                        <div class="vg-simulation-help">
+
+                            Select a dependency from the analyzed project,
+                            verify the current version, enter a proposed
+                            target version, and run the simulation.
+                            VulnGraph will compare the current and target
+                            security states.
+
+                        </div>
+
+
+                        <!-- SIMULATION PIPELINE -->
+
+                        <div class="vg-simulation-flow">
+
+                            <div class="vg-simulation-flow-card">
+
+                                <div class="vg-simulation-flow-number">
+                                    STEP 01
+                                </div>
+
+                                <strong>
+                                    Current Security State
+                                </strong>
+
+                                <p>
+                                    Existing vulnerabilities, calculated risk,
+                                    trust, exposure and criticality are used
+                                    as the baseline.
+                                </p>
+
+                            </div>
+
+
+                            <div class="vg-simulation-arrow">
+                                →
+                            </div>
+
+
+                            <div class="vg-simulation-flow-card">
+
+                                <div class="vg-simulation-flow-number">
+                                    STEP 02
+                                </div>
+
+                                <strong>
+                                    Target Version Analysis
+                                </strong>
+
+                                <p>
+                                    VulnGraph evaluates the proposed dependency
+                                    version and calculates its projected risk.
+                                </p>
+
+                            </div>
+
+
+                            <div class="vg-simulation-arrow">
+                                →
+                            </div>
+
+
+                            <div class="vg-simulation-flow-card">
+
+                                <div class="vg-simulation-flow-number">
+                                    STEP 03
+                                </div>
+
+                                <strong>
+                                    Security Decision
+                                </strong>
+
+                                <p>
+                                    Risk reduction, vulnerability change and
+                                    overall security status are reported.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="vg-simulation-result-note">
+
+                            <strong>
+                                Decision Support:
+                            </strong>
+
+                            <span>
+                                What-If simulation helps assess whether a
+                                dependency version change is likely to improve,
+                                worsen, or leave the project's calculated
+                                security posture unchanged.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SECURITY INTERPRETATION -->
 
             <section id="risk-analysis"
                      class="vg-panel vg-interpretation">
@@ -1414,7 +1697,6 @@
 
                 </div>
 
-
                 <div class="vg-interpretation-grid">
 
                     <div>
@@ -1437,7 +1719,6 @@
 
                     </div>
 
-
                     <div>
 
                         <span>
@@ -1450,7 +1731,6 @@
 
                     </div>
 
-
                     <div>
 
                         <span>
@@ -1462,7 +1742,6 @@
                         </strong>
 
                     </div>
-
 
                     <div>
 
@@ -1481,9 +1760,7 @@
             </section>
 
 
-            <!-- =================================================
-                 WORKFLOW
-            ================================================== -->
+            <!-- WORKFLOW -->
 
             <section id="workflow"
                      class="vg-panel vg-workflow">
@@ -1508,7 +1785,6 @@
 
                 </div>
 
-
                 <div class="vg-workflow-steps">
 
                     <div class="vg-step active">
@@ -1525,9 +1801,7 @@
 
                     </div>
 
-
                     <div class="vg-step-line"></div>
-
 
                     <div class="vg-step active">
 
@@ -1543,9 +1817,7 @@
 
                     </div>
 
-
                     <div class="vg-step-line"></div>
-
 
                     <div class="vg-step active">
 
@@ -1561,9 +1833,7 @@
 
                     </div>
 
-
                     <div class="vg-step-line"></div>
-
 
                     <div class="vg-step active">
 
@@ -1575,6 +1845,38 @@
 
                         <span>
                             Risk assessment
+                        </span>
+
+                    </div>
+
+                    <div class="vg-step-line"></div>
+
+                    <div class="vg-step active">
+
+                        <b>05</b>
+
+                        <strong>
+                            What-If Simulation
+                        </strong>
+
+                        <span>
+                            Version impact analysis
+                        </span>
+
+                    </div>
+
+                    <div class="vg-step-line"></div>
+
+                    <div class="vg-step active">
+
+                        <b>06</b>
+
+                        <strong>
+                            Recommend
+                        </strong>
+
+                        <span>
+                            Security decision
                         </span>
 
                     </div>
@@ -1605,7 +1907,6 @@
 
 <!-- ============================================================
      EXISTING GRAPH DATA
-     DO NOT CHANGE
 ============================================================ -->
 
 <script>
@@ -1617,8 +1918,61 @@
 
 
 <!-- ============================================================
+     WHAT-IF SIMULATION AUTO-FILL
+============================================================ -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const dependencySelect =
+                document.getElementById(
+                    "simulation-dependency"
+                );
+
+            const currentVersionInput =
+                document.getElementById(
+                    "simulation-current-version"
+                );
+
+
+            if (
+                dependencySelect &&
+                currentVersionInput
+            ) {
+
+                dependencySelect.addEventListener(
+                    "change",
+                    function () {
+
+                        const selectedOption =
+                            dependencySelect.options[
+                                dependencySelect.selectedIndex
+                            ];
+
+
+                        const currentVersion =
+                            selectedOption.dataset.version || "";
+
+
+                        currentVersionInput.value =
+                            currentVersion;
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+<!-- ============================================================
      EXISTING GRAPH SCRIPT
-     DO NOT REMOVE
 ============================================================ -->
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>

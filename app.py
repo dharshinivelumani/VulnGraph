@@ -149,7 +149,6 @@ ALLOWED_FILENAMES = {
 # =========================================================
 
 def is_logged_in():
-
     return session.get(
         "logged_in",
         False
@@ -161,7 +160,6 @@ def is_logged_in():
 # =========================================================
 
 def get_client_identifier():
-
     return request.remote_addr or "unknown"
 
 
@@ -170,7 +168,6 @@ def get_client_identifier():
 # =========================================================
 
 def is_login_rate_limited():
-
     client_id = get_client_identifier()
 
     current_time = time.time()
@@ -183,8 +180,7 @@ def is_login_rate_limited():
     valid_attempts = [
         timestamp
         for timestamp in attempts
-        if current_time - timestamp
-        < LOGIN_ATTEMPT_WINDOW
+        if current_time - timestamp < LOGIN_ATTEMPT_WINDOW
     ]
 
     login_attempts[client_id] = valid_attempts
@@ -197,7 +193,6 @@ def is_login_rate_limited():
 # =========================================================
 
 def record_failed_login():
-
     client_id = get_client_identifier()
 
     current_time = time.time()
@@ -210,8 +205,7 @@ def record_failed_login():
     attempts = [
         timestamp
         for timestamp in attempts
-        if current_time - timestamp
-        < LOGIN_ATTEMPT_WINDOW
+        if current_time - timestamp < LOGIN_ATTEMPT_WINDOW
     ]
 
     attempts.append(
@@ -226,7 +220,6 @@ def record_failed_login():
 # =========================================================
 
 def clear_failed_logins():
-
     client_id = get_client_identifier()
 
     login_attempts.pop(
@@ -240,22 +233,18 @@ def clear_failed_logins():
 # =========================================================
 
 def get_ecosystem_from_filename(filename):
-
     filename = filename.lower()
 
     if filename in {
         "package.json",
         "package-lock.json"
     }:
-
         return "npm"
 
     if filename == "requirements.txt":
-
         return "pypi"
 
     if filename == "pom.xml":
-
         return "maven"
 
     return None
@@ -269,15 +258,12 @@ def validate_uploaded_content(
     file_path,
     filename
 ):
-
     try:
-
         file_size = os.path.getsize(
             file_path
         )
 
         if file_size == 0:
-
             return False, (
                 "Uploaded file is empty."
             )
@@ -290,20 +276,17 @@ def validate_uploaded_content(
             "package.json",
             "package-lock.json"
         }:
-
             with open(
                 file_path,
                 "r",
                 encoding="utf-8"
             ) as file:
-
                 data = json.load(file)
 
             if not isinstance(
                 data,
                 dict
             ):
-
                 return False, (
                     "Invalid JSON structure."
                 )
@@ -313,7 +296,6 @@ def validate_uploaded_content(
         # -------------------------------------------------
 
         elif filename == "pom.xml":
-
             ET.parse(
                 file_path
             )
@@ -323,23 +305,19 @@ def validate_uploaded_content(
         # -------------------------------------------------
 
         elif filename == "requirements.txt":
-
             with open(
                 file_path,
                 "r",
                 encoding="utf-8"
             ) as file:
-
                 content = file.read().strip()
 
             if not content:
-
                 return False, (
                     "requirements.txt is empty."
                 )
 
         else:
-
             return False, (
                 "Unsupported file type."
             )
@@ -347,25 +325,21 @@ def validate_uploaded_content(
         return True, None
 
     except json.JSONDecodeError:
-
         return False, (
             "Invalid JSON file."
         )
 
     except ET.ParseError:
-
         return False, (
             "Invalid XML file."
         )
 
     except UnicodeDecodeError:
-
         return False, (
             "File encoding is not supported."
         )
 
     except Exception as error:
-
         print(
             "Content validation error:",
             error
@@ -384,12 +358,10 @@ def get_dependency_vulnerabilities(
     scan_results,
     dependency
 ):
-
     if isinstance(
         scan_results,
         dict
     ):
-
         result = scan_results.get(
             dependency,
             {}
@@ -399,7 +371,6 @@ def get_dependency_vulnerabilities(
             result,
             dict
         ):
-
             vulnerabilities = result.get(
                 "vulnerabilities",
                 []
@@ -409,21 +380,18 @@ def get_dependency_vulnerabilities(
                 vulnerabilities,
                 list
             ):
-
                 return vulnerabilities
 
     elif isinstance(
         scan_results,
         list
     ):
-
         for result in scan_results:
 
             if not isinstance(
                 result,
                 dict
             ):
-
                 continue
 
             if result.get(
@@ -439,7 +407,6 @@ def get_dependency_vulnerabilities(
                     vulnerabilities,
                     list
                 ):
-
                     return vulnerabilities
 
     return []
@@ -452,32 +419,27 @@ def get_dependency_vulnerabilities(
 def normalize_explanation(
     explanation
 ):
-
     if isinstance(
         explanation,
         str
     ):
-
         return explanation
 
     if isinstance(
         explanation,
         dict
     ):
-
         for key in [
             "explanation",
             "summary",
             "message",
             "text"
         ]:
-
             value = explanation.get(
                 key
             )
 
             if value:
-
                 return str(
                     value
                 )
@@ -495,32 +457,27 @@ def normalize_explanation(
 def normalize_recommendation(
     recommendation
 ):
-
     if isinstance(
         recommendation,
         str
     ):
-
         return recommendation
 
     if isinstance(
         recommendation,
         dict
     ):
-
         for key in [
             "recommendation",
             "action",
             "message",
             "summary"
         ]:
-
             value = recommendation.get(
                 key
             )
 
             if value:
-
                 return str(
                     value
                 )
@@ -657,20 +614,17 @@ def cleanup_temp_folder(
     path,
     retries=5
 ):
-
     if not path:
         return True
 
     for attempt in range(
         retries
     ):
-
         try:
 
             if not os.path.exists(
                 path
             ):
-
                 return True
 
             shutil.rmtree(
@@ -1081,7 +1035,6 @@ def upload():
                     item,
                     dict
                 ):
-
                     continue
 
                 if item.get(
@@ -1154,7 +1107,6 @@ def upload():
                         relationship,
                         dict
                     ):
-
                         continue
 
                     if (
@@ -1728,7 +1680,7 @@ def simulate():
     ecosystem = request.form.get(
         "ecosystem",
         "npm"
-    ).strip()
+    ).strip().lower()
 
     # -----------------------------------------------------
     # VALIDATE DEPENDENCY
@@ -1738,6 +1690,21 @@ def simulate():
 
         flash(
             "Dependency name is required.",
+            "error"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    # -----------------------------------------------------
+    # VALIDATE CURRENT VERSION
+    # -----------------------------------------------------
+
+    if not current_version:
+
+        flash(
+            "Current dependency version is required.",
             "error"
         )
 
@@ -1760,11 +1727,108 @@ def simulate():
             url_for("index")
         )
 
+    # -----------------------------------------------------
+    # VALIDATE ECOSYSTEM
+    # -----------------------------------------------------
+
+    if ecosystem not in {
+        "npm",
+        "pypi",
+        "maven"
+    }:
+
+        flash(
+            "Unsupported dependency ecosystem.",
+            "error"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
     try:
 
+        # =================================================
+        # GET EXISTING DEPENDENCY CONTEXT
+        # =================================================
+
+        analysis_id = session.get(
+            "analysis_id"
+        )
+
+        analysis = (
+            REPORT_CACHE.get(
+                analysis_id
+            )
+            if analysis_id
+            else None
+        )
+
+        dependency_context = None
+
+        if analysis:
+
+            for item in analysis.get(
+                "scan_results",
+                []
+            ):
+
+                if not isinstance(
+                    item,
+                    dict
+                ):
+
+                    continue
+
+                if item.get(
+                    "name"
+                ) == dependency:
+
+                    dependency_context = item
+
+                    break
+
+        # =================================================
+        # EXPOSURE + CRITICALITY
+        # =================================================
+
+        if dependency_context:
+
+            exposure_level = (
+                dependency_context.get(
+                    "exposure"
+                )
+                or "High"
+            )
+
+            criticality_level = (
+                dependency_context.get(
+                    "criticality"
+                )
+                or "High"
+            )
+
+        else:
+
+            exposure_level = "High"
+
+            criticality_level = "High"
+
         # -------------------------------------------------
+        # NORMALIZE SECURITY CONTEXT
+        # -------------------------------------------------
+
+        exposure_level = str(
+            exposure_level
+        ).strip()
+
+        criticality_level = str(
+            criticality_level
+        ).strip()
+
+        # =================================================
         # CURRENT VERSION SCAN
-        # -------------------------------------------------
+        # =================================================
 
         current_scan = scan_dependencies(
 
@@ -1779,9 +1843,9 @@ def simulate():
                 ecosystem
         )
 
-        # -------------------------------------------------
+        # =================================================
         # TARGET VERSION SCAN
-        # -------------------------------------------------
+        # =================================================
 
         target_scan = scan_dependencies(
 
@@ -1796,9 +1860,9 @@ def simulate():
                 ecosystem
         )
 
-        # -------------------------------------------------
+        # =================================================
         # CURRENT VULNERABILITIES
-        # -------------------------------------------------
+        # =================================================
 
         current_vulnerabilities = (
             get_dependency_vulnerabilities(
@@ -1807,9 +1871,9 @@ def simulate():
             )
         )
 
-        # -------------------------------------------------
+        # =================================================
         # TARGET VULNERABILITIES
-        # -------------------------------------------------
+        # =================================================
 
         target_vulnerabilities = (
             get_dependency_vulnerabilities(
@@ -1818,23 +1882,71 @@ def simulate():
             )
         )
 
-        # -------------------------------------------------
+        # =================================================
         # TRUST SCORE
+        # =================================================
+
+        try:
+
+            if dependency_context:
+
+                trust_score = dependency_context.get(
+                    "trust_score",
+                    dependency_context.get(
+                        "trust",
+                        None
+                    )
+                )
+
+                if trust_score is None:
+
+                    trust_score = calculate_trust(
+                        dependency
+                    )
+
+            else:
+
+                trust_score = calculate_trust(
+                    dependency
+                )
+
+        except Exception as error:
+
+            print(
+                "Simulation trust calculation error:",
+                error
+            )
+
+            trust_score = 100.0
+
+        # -------------------------------------------------
+        # NORMALIZE TRUST
         # -------------------------------------------------
 
         try:
 
-            trust_score = calculate_trust(
-                dependency
+            trust_score = float(
+                trust_score
             )
 
-        except Exception:
+        except (
+            TypeError,
+            ValueError
+        ):
 
-            trust_score = 100
+            trust_score = 100.0
 
-        # -------------------------------------------------
-        # SIMULATION
-        # -------------------------------------------------
+        trust_score = max(
+            0.0,
+            min(
+                trust_score,
+                100.0
+            )
+        )
+
+        # =================================================
+        # WHAT-IF SIMULATION
+        # =================================================
 
         simulation = simulate_version_change(
 
@@ -1844,18 +1956,46 @@ def simulate():
 
             trust_score,
 
-            "High",
+            exposure_level,
 
-            "High"
+            criticality_level
         )
 
-        # -------------------------------------------------
+        # =================================================
+        # ADD SIMULATION CONTEXT
+        # =================================================
+
+        simulation[
+            "dependency"
+        ] = dependency
+
+        simulation[
+            "ecosystem"
+        ] = ecosystem
+
+        simulation[
+            "current_version"
+        ] = current_version
+
+        simulation[
+            "target_version"
+        ] = target_version
+
+        simulation[
+            "trust_score"
+        ] = trust_score
+
+        simulation[
+            "exposure"
+        ] = exposure_level
+
+        simulation[
+            "criticality"
+        ] = criticality_level
+
+        # =================================================
         # STORE SIMULATION
-        # -------------------------------------------------
-
-        analysis_id = session.get(
-            "analysis_id"
-        )
+        # =================================================
 
         if analysis_id in REPORT_CACHE:
 
@@ -1883,9 +2023,9 @@ def simulate():
                 "simulation_target_version"
             ] = target_version
 
-        # -------------------------------------------------
+        # =================================================
         # SIMULATION PAGE
-        # -------------------------------------------------
+        # =================================================
 
         return render_template(
 
@@ -1893,6 +2033,12 @@ def simulate():
 
             dependency=
                 dependency,
+
+            dependency_name=
+                dependency,
+
+            ecosystem=
+                ecosystem,
 
             current_version=
                 current_version,
@@ -1908,6 +2054,12 @@ def simulate():
 
             trust_score=
                 trust_score,
+
+            exposure_level=
+                exposure_level,
+
+            criticality_level=
+                criticality_level,
 
             simulation=
                 simulation
@@ -1999,9 +2151,7 @@ def generate_report():
     )
 
     pdf_path = os.path.join(
-
         REPORT_FOLDER,
-
         f"{analysis_id}_{pdf_filename}"
     )
 
@@ -2115,10 +2265,7 @@ def request_entity_too_large(
 if __name__ == "__main__":
 
     app.run(
-
         host="127.0.0.1",
-
         port=5000,
-
         debug=False
     )

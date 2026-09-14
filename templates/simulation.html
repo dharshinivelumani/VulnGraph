@@ -1,263 +1,1408 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VulnGraph - What-If Simulation</title>
+    <title>VulnGraph — What-If Risk Simulation</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at top right, rgba(45, 212, 191, 0.08), transparent 30%),
+                #070b12;
+            color: #e8edf5;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 32px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* =========================================
+           TOP BAR
+        ========================================= */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 34px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(45, 212, 191, 0.35);
+            border-radius: 12px;
+            background: rgba(45, 212, 191, 0.08);
+            font-size: 20px;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .brand-subtitle {
+            margin-top: 3px;
+            color: #718096;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .back-btn {
+            padding: 11px 17px;
+            border: 1px solid #263142;
+            border-radius: 9px;
+            background: #0d131d;
+            color: #aeb8c7;
+            font-size: 12px;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .back-btn:hover {
+            border-color: #3b495d;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* =========================================
+           HERO
+        ========================================= */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 32px;
+            border: 1px solid #202a38;
+            border-radius: 16px;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(16, 24, 36, 0.98),
+                    rgba(9, 14, 22, 0.98)
+                );
+            margin-bottom: 22px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            right: -120px;
+            top: -140px;
+            border-radius: 50%;
+            background: rgba(45, 212, 191, 0.07);
+            filter: blur(5px);
+        }
+
+        .section-kicker {
+            color: #38d9c0;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin: 10px 0 9px;
+            font-size: 34px;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .hero p {
+            max-width: 780px;
+            margin: 0;
+            color: #8290a3;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .dependency-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 22px;
+            padding: 9px 13px;
+            border: 1px solid #273345;
+            border-radius: 8px;
+            background: #0b111a;
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .dependency-chip span {
+            color: #66758a;
+        }
+
+        /* =========================================
+           VERSION COMPARISON
+        ========================================= */
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 70px 1fr;
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 22px;
+        }
+
+        .state-card {
+            border: 1px solid #202a38;
+            border-radius: 14px;
+            background: #0b111a;
+            padding: 23px;
+        }
+
+        .state-card.current {
+            border-top: 2px solid #64748b;
+        }
+
+        .state-card.target {
+            border-top: 2px solid #2dd4bf;
+        }
+
+        .state-label {
+            color: #718096;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .state-version {
+            margin-top: 9px;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .state-meta {
+            margin-top: 6px;
+            color: #66758a;
+            font-size: 11px;
+        }
+
+        .compare-arrow {
+            display: grid;
+            place-items: center;
+            border: 1px solid #202a38;
+            border-radius: 12px;
+            background: #0b111a;
+            color: #38d9c0;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        /* =========================================
+           METRIC CARDS
+        ========================================= */
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .metric-card {
+            padding: 20px;
+            border: 1px solid #202a38;
+            border-radius: 13px;
+            background: #0b111a;
+        }
+
+        .metric-label {
+            color: #68778b;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            margin-top: 9px;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .metric-change {
+            margin-top: 7px;
+            color: #7d8da2;
+            font-size: 11px;
+        }
+
+        .metric-change.improved {
+            color: #38d9c0;
+        }
+
+        .metric-change.increased {
+            color: #fb7185;
+        }
+
+        /* =========================================
+           MAIN GRID
+        ========================================= */
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 18px;
+        }
+
+        .panel {
+            border: 1px solid #202a38;
+            border-radius: 14px;
+            background: #0b111a;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #1a2330;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .panel-header p {
+            margin: 5px 0 0;
+            color: #68778b;
+            font-size: 11px;
+        }
+
+        .panel-body {
+            padding: 22px;
+        }
+
+        /* =========================================
+           RISK COMPARISON
+        ========================================= */
+
+        .risk-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .risk-box {
+            padding: 18px;
+            border: 1px solid #202a38;
+            border-radius: 10px;
+            background: #080d15;
+        }
+
+        .risk-box-label {
+            color: #68778b;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .risk-number {
+            margin-top: 8px;
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+        .risk-bar {
+            height: 7px;
+            margin-top: 14px;
+            border-radius: 99px;
+            background: #17202d;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: #64748b;
+        }
+
+        .risk-fill.target {
+            background: #2dd4bf;
+        }
+
+        /* =========================================
+           DELTA
+        ========================================= */
+
+        .delta-box {
+            margin-top: 15px;
+            padding: 18px;
+            border: 1px dashed #2a3747;
+            border-radius: 10px;
+            background: #091018;
+        }
+
+        .delta-title {
+            color: #6f8094;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .delta-value {
+            margin-top: 7px;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .delta-subtitle {
+            margin-top: 5px;
+            color: #75859a;
+            font-size: 11px;
+        }
+
+        /* =========================================
+           SEVERITY
+        ========================================= */
+
+        .severity-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .severity-row {
+            display: grid;
+            grid-template-columns: 90px 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 11px 12px;
+            border: 1px solid #1c2734;
+            border-radius: 8px;
+            background: #080d15;
+        }
+
+        .severity-name {
+            color: #c4ceda;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .severity-count {
+            color: #8a99ab;
+            font-size: 11px;
+        }
+
+        .severity-count strong {
+            color: #ffffff;
+        }
+
+        /* =========================================
+           STATUS
+        ========================================= */
+
+        .status-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            border: 1px solid #1f3340;
+            border-radius: 11px;
+            background: rgba(45, 212, 191, 0.045);
+        }
+
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: rgba(45, 212, 191, 0.1);
+            font-size: 18px;
+        }
+
+        .status-title {
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .status-description {
+            margin-top: 4px;
+            color: #74849a;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           INTERPRETATION
+        ========================================= */
+
+        .interpretation {
+            padding: 20px;
+            border-left: 2px solid #2dd4bf;
+            background: #091118;
+            color: #a8b4c3;
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
+        .interpretation strong {
+            color: #ffffff;
+        }
+
+        /* =========================================
+           RECOMMENDATION
+        ========================================= */
+
+        .recommendation {
+            margin-top: 15px;
+            padding: 20px;
+            border: 1px solid #263342;
+            border-radius: 11px;
+            background: #0a1018;
+        }
+
+        .recommendation-label {
+            color: #38d9c0;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .recommendation-text {
+            margin-top: 9px;
+            color: #c6d0dc;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           CONTEXT
+        ========================================= */
+
+        .context-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .context-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #18212d;
+        }
+
+        .context-item:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .context-label {
+            color: #69788b;
+            font-size: 11px;
+        }
+
+        .context-value {
+            color: #d6dee8;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* =========================================
+           ACTIONS
+        ========================================= */
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #293647;
+            background: #0e151f;
+            color: #bdc8d6;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            transition: 0.2s ease;
+        }
+
+        .action-btn:hover {
+            border-color: #3a4b60;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            border-color: rgba(45, 212, 191, 0.35);
+            background: rgba(45, 212, 191, 0.08);
+            color: #48dfc9;
+        }
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .footer {
+            margin-top: 25px;
+            padding: 18px 0;
+            color: #4f5d6e;
+            font-size: 10px;
+            text-align: center;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 1000px) {
+
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .page {
+                padding: 18px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .hero {
+                padding: 23px;
+            }
+
+            .hero h1 {
+                font-size: 27px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .compare-arrow {
+                min-height: 45px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-row {
+                grid-template-columns: 1fr;
+            }
+
+            .severity-row {
+                grid-template-columns: 75px 1fr 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
+<div class="page">
+
     <div class="container">
 
-        <h1>What-If Risk Simulation</h1>
-
-        <h2>{{ dependency_name }}</h2>
-
-
-        <!-- ========================= -->
-        <!-- Current Security State -->
-        <!-- ========================= -->
-
-        <div class="dependency-card">
-
-            <h3>Current Security State</h3>
-
-            <p>
-                <strong>Current Version:</strong>
-                {{ current_version }}
-            </p>
-
-            <p>
-                <strong>Current Vulnerabilities:</strong>
-                {{ current_vulnerabilities|length }}
-            </p>
-
-            <p>
-                <strong>Current Risk Score:</strong>
-                {{ simulation.current_risk }}%
-            </p>
-
-            <p>
-                <strong>Trust Score:</strong>
-                {{ trust_score }}%
-            </p>
-
-            <hr>
-
-            <h3>Simulated Security State</h3>
-
-            <p>
-                <strong>Target Version:</strong>
-                {{ target_version }}
-            </p>
-
-            <p>
-                <strong>Simulated Vulnerabilities:</strong>
-                {{ simulated_vulnerabilities|length }}
-            </p>
-
-            <p>
-                <strong>Simulated Risk Score:</strong>
-                {{ simulation.simulated_risk }}%
-            </p>
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- Risk Comparison -->
-        <!-- ========================= -->
-
-        <div class="dependency-card">
-
-            <h3>Risk Comparison</h3>
-
-            <p>
-                <strong>Current Risk:</strong>
-                {{ simulation.current_risk }}%
-            </p>
-
-            <p>
-                <strong>Simulated Risk:</strong>
-                {{ simulation.simulated_risk }}%
-            </p>
-
-            <p>
-                <strong>Risk Reduction:</strong>
-                {{ simulation.risk_reduction }}%
-            </p>
-
-            <p>
-                <strong>Risk Reduction Percentage:</strong>
-                {{ simulation.risk_reduction_percentage }}%
-            </p>
-
-            <p>
-                <strong>Current Vulnerabilities:</strong>
-                {{ simulation.current_vulnerability_count }}
-            </p>
-
-            <p>
-                <strong>Simulated Vulnerabilities:</strong>
-                {{ simulation.simulated_vulnerability_count }}
-            </p>
-
-            <p>
-                <strong>Vulnerability Change:</strong>
-                {{ simulation.vulnerability_reduction }}
-            </p>
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- Security Status -->
-        <!-- ========================= -->
-
-        <div class="recommendation-box">
-
-            <h3>Security Status</h3>
-
-            <p>
-                <strong>
-                    {{ simulation.security_status }}
-                </strong>
-            </p>
-
-            <p>
-                {{ simulation.vulnerability_status }}
-            </p>
-
-            <hr>
-
-            <h3>Simulation Result</h3>
-
-            <p>
-                {{ simulation.simulation_result }}
-            </p>
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- What-If Interpretation -->
-        <!-- ========================= -->
-
-        <div class="recommendation-box">
-
-            <h3>What-If Interpretation</h3>
-
-            {% if simulation.risk_reduction > 0 %}
-
-                <p>
-                    Upgrading
-                    <strong>{{ dependency_name }}</strong>
-                    to
-                    <strong>{{ target_version }}</strong>
-                    reduces the calculated security risk.
-                </p>
-
-                <p>
-                    The risk changes from
-                    <strong>
-                        {{ simulation.current_risk }}%
-                    </strong>
-                    to
-                    <strong>
-                        {{ simulation.simulated_risk }}%
-                    </strong>.
-                </p>
-
-                {% if simulation.vulnerability_reduction > 0 %}
-
-                    <p>
-                        The number of known vulnerabilities is
-                        reduced by
-                        <strong>
-                            {{ simulation.vulnerability_reduction }}
-                        </strong>.
-                    </p>
-
-                {% endif %}
-
-            {% elif simulation.risk_reduction == 0 %}
-
-                <p>
-                    Upgrading to
-                    <strong>{{ target_version }}</strong>
-                    does not produce a measurable change in
-                    the calculated risk score.
-                </p>
-
-            {% else %}
-
-                <p>
-                    The simulated target version produces a
-                    higher calculated security risk.
-                </p>
-
-                <p>
-                    Current risk:
-                    <strong>
-                        {{ simulation.current_risk }}%
-                    </strong>
-                </p>
-
-                <p>
-                    Simulated risk:
-                    <strong>
-                        {{ simulation.simulated_risk }}%
-                    </strong>
-                </p>
-
-            {% endif %}
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- Security Note -->
-        <!-- ========================= -->
-
-        <div class="dependency-card">
-
-            <h3>Security Note</h3>
-
-            <p>
-                This simulation is an analytical estimate based
-                on the vulnerability and risk data available for
-                the selected target version. It does not guarantee
-                application compatibility or complete vulnerability
-                remediation.
-            </p>
-
-            <p>
-                Compatibility testing and verification against the
-                relevant security advisories are recommended before
-                deploying the target version.
-            </p>
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- Back to Dashboard -->
-        <!-- ========================= -->
-
-        <p>
-            <a href="/">
-                Back to VulnGraph
+        <!-- =========================================
+             TOP BAR
+        ========================================== -->
+
+        <header class="topbar">
+
+            <div class="brand">
+
+                <div class="brand-mark">
+                    🛡
+                </div>
+
+                <div>
+                    <div class="brand-title">
+                        VulnGraph
+                    </div>
+
+                    <div class="brand-subtitle">
+                        Security Intelligence Platform
+                    </div>
+                </div>
+
+            </div>
+
+            <a
+                href="{{ url_for('index') }}"
+                class="back-btn"
+            >
+                ← Back to Dashboard
             </a>
-        </p>
+
+        </header>
+
+
+        <!-- =========================================
+             HERO
+        ========================================== -->
+
+        <section class="hero">
+
+            <div class="section-kicker">
+                06 / WHAT-IF RISK SIMULATION
+            </div>
+
+            <h1>
+                What-If Risk Simulation
+            </h1>
+
+            <p>
+                Evaluate the projected security impact of changing
+                a dependency version by comparing the current
+                vulnerability and risk state against the simulated
+                target version.
+            </p>
+
+            <div class="dependency-chip">
+
+                🧩
+
+                <strong>
+                    {{ dependency_name or dependency }}
+                </strong>
+
+                <span>
+                    {{ ecosystem | upper }}
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             VERSION COMPARISON
+        ========================================== -->
+
+        <section class="comparison">
+
+            <div class="state-card current">
+
+                <div class="state-label">
+                    Current Security State
+                </div>
+
+                <div class="state-version">
+                    {{ current_version }}
+                </div>
+
+                <div class="state-meta">
+                    Existing dependency version
+                </div>
+
+            </div>
+
+
+            <div class="compare-arrow">
+                →
+            </div>
+
+
+            <div class="state-card target">
+
+                <div class="state-label">
+                    Simulated Security State
+                </div>
+
+                <div class="state-version">
+                    {{ target_version }}
+                </div>
+
+                <div class="state-meta">
+                    Proposed target version
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             KPI METRICS
+        ========================================== -->
+
+        <section class="metrics">
+
+            <!-- Vulnerabilities -->
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Vulnerabilities
+                </div>
+
+                <div class="metric-value">
+                    {{ simulation.current_vulnerability_count }}
+                    →
+                    {{ simulation.simulated_vulnerability_count }}
+                </div>
+
+                <div class="
+                    metric-change
+                    {% if simulation.vulnerability_reduction > 0 %}
+                        improved
+                    {% elif simulation.vulnerability_reduction < 0 %}
+                        increased
+                    {% endif %}
+                ">
+                    {% if simulation.vulnerability_reduction > 0 %}
+                        ↓ {{ simulation.vulnerability_reduction }}
+                        vulnerabilities
+                    {% elif simulation.vulnerability_reduction < 0 %}
+                        ↑ {{ simulation.vulnerability_reduction | abs }}
+                        vulnerabilities
+                    {% else %}
+                        No vulnerability change
+                    {% endif %}
+                </div>
+
+            </div>
+
+
+            <!-- Risk -->
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Risk Score
+                </div>
+
+                <div class="metric-value">
+                    {{ simulation.current_risk }}
+                    →
+                    {{ simulation.simulated_risk }}
+                </div>
+
+                <div class="
+                    metric-change
+                    {% if simulation.risk_reduction > 0 %}
+                        improved
+                    {% elif simulation.risk_reduction < 0 %}
+                        increased
+                    {% endif %}
+                ">
+                    {% if simulation.risk_reduction > 0 %}
+                        ↓ {{ simulation.risk_reduction }}
+                        risk points
+                    {% elif simulation.risk_reduction < 0 %}
+                        ↑ {{ simulation.risk_reduction | abs }}
+                        risk points
+                    {% else %}
+                        No risk change
+                    {% endif %}
+                </div>
+
+            </div>
+
+
+            <!-- Risk Percentage -->
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Risk Change
+                </div>
+
+                <div class="metric-value">
+
+                    {% if simulation.risk_reduction > 0 %}
+                        -{{ simulation.risk_reduction_percentage }}%
+                    {% elif simulation.risk_reduction < 0 %}
+                        +{{ simulation.risk_change_percentage | abs }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+
+                </div>
+
+                <div class="
+                    metric-change
+                    {% if simulation.risk_reduction > 0 %}
+                        improved
+                    {% elif simulation.risk_reduction < 0 %}
+                        increased
+                    {% endif %}
+                ">
+
+                    {% if simulation.risk_reduction > 0 %}
+                        Risk reduction
+                    {% elif simulation.risk_reduction < 0 %}
+                        Risk increase
+                    {% else %}
+                        No measurable change
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Security Status -->
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Security Status
+                </div>
+
+                <div class="metric-value">
+                    {{ simulation.security_status }}
+                </div>
+
+                <div class="metric-change">
+                    {{ simulation.vulnerability_status }}
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             MAIN CONTENT
+        ========================================== -->
+
+        <div class="main-grid">
+
+
+            <!-- LEFT COLUMN -->
+
+            <div>
+
+
+                <!-- RISK COMPARISON -->
+
+                <section class="panel">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Risk Comparison
+                        </h2>
+
+                        <p>
+                            Current calculated risk versus projected
+                            target-version risk.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="risk-row">
+
+                            <div class="risk-box">
+
+                                <div class="risk-box-label">
+                                    Current Risk
+                                </div>
+
+                                <div class="risk-number">
+                                    {{ simulation.current_risk }}
+                                </div>
+
+                                <div class="risk-bar">
+
+                                    <div
+                                        class="risk-fill"
+                                        style="width: {{ [simulation.current_risk, 100] | min }}%;"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="risk-box">
+
+                                <div class="risk-box-label">
+                                    Simulated Risk
+                                </div>
+
+                                <div class="risk-number">
+                                    {{ simulation.simulated_risk }}
+                                </div>
+
+                                <div class="risk-bar">
+
+                                    <div
+                                        class="risk-fill target"
+                                        style="width: {{ [simulation.simulated_risk, 100] | min }}%;"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="delta-box">
+
+                            <div class="delta-title">
+                                Risk Delta
+                            </div>
+
+                            <div class="delta-value">
+
+                                {% if simulation.risk_reduction > 0 %}
+                                    ↓ {{ simulation.risk_reduction }}
+                                {% elif simulation.risk_reduction < 0 %}
+                                    ↑ {{ simulation.risk_change | abs }}
+                                {% else %}
+                                    0
+                                {% endif %}
+
+                            </div>
+
+                            <div class="delta-subtitle">
+
+                                {% if simulation.risk_reduction > 0 %}
+                                    The target version is projected
+                                    to reduce calculated risk by
+                                    {{ simulation.risk_reduction_percentage }}%.
+                                {% elif simulation.risk_reduction < 0 %}
+                                    The target version is projected
+                                    to increase calculated risk by
+                                    {{ simulation.risk_change_percentage | abs }}%.
+                                {% else %}
+                                    No measurable change in calculated risk.
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SEVERITY COMPARISON -->
+
+                <section class="panel" style="margin-top: 18px;">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Vulnerability Severity Comparison
+                        </h2>
+
+                        <p>
+                            Severity distribution before and after
+                            the simulated version change.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="severity-list">
+
+                            {% for severity in ["Critical", "High", "Medium", "Low"] %}
+
+                            <div class="severity-row">
+
+                                <div class="severity-name">
+                                    {{ severity }}
+                                </div>
+
+                                <div class="severity-count">
+                                    Current:
+                                    <strong>
+                                        {{ simulation.current_severity_counts[severity] }}
+                                    </strong>
+                                </div>
+
+                                <div class="severity-count">
+                                    Target:
+                                    <strong>
+                                        {{ simulation.simulated_severity_counts[severity] }}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- INTERPRETATION -->
+
+                <section class="panel" style="margin-top: 18px;">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Explainable What-If Interpretation
+                        </h2>
+
+                        <p>
+                            Security reasoning generated from the
+                            simulation result.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="interpretation">
+
+                            <strong>
+                                Simulation finding:
+                            </strong>
+
+                            {{ simulation.interpretation }}
+
+                        </div>
+
+
+                        <div class="recommendation">
+
+                            <div class="recommendation-label">
+                                Recommended Action
+                            </div>
+
+                            <div class="recommendation-text">
+                                {{ simulation.recommendation }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- RIGHT COLUMN -->
+
+            <div>
+
+
+                <!-- STATUS -->
+
+                <section class="panel">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Security Decision
+                        </h2>
+
+                        <p>
+                            Overall simulation outcome.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="status-card">
+
+                            <div class="status-icon">
+                                {% if simulation.security_status == "Improved" %}
+                                    ✓
+                                {% elif simulation.security_status == "Increased" %}
+                                    !
+                                {% else %}
+                                    =
+                                {% endif %}
+                            </div>
+
+                            <div>
+
+                                <div class="status-title">
+                                    {{ simulation.security_status }}
+                                </div>
+
+                                <div class="status-description">
+                                    {{ simulation.simulation_result }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SECURITY CONTEXT -->
+
+                <section class="panel" style="margin-top: 18px;">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Security Context
+                        </h2>
+
+                        <p>
+                            Parameters used by the risk engine.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="context-list">
+
+                            <div class="context-item">
+
+                                <span class="context-label">
+                                    Dependency
+                                </span>
+
+                                <span class="context-value">
+                                    {{ dependency_name or dependency }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="context-item">
+
+                                <span class="context-label">
+                                    Ecosystem
+                                </span>
+
+                                <span class="context-value">
+                                    {{ ecosystem | upper }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="context-item">
+
+                                <span class="context-label">
+                                    Trust Score
+                                </span>
+
+                                <span class="context-value">
+                                    {{ simulation.trust_score }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="context-item">
+
+                                <span class="context-label">
+                                    Exposure
+                                </span>
+
+                                <span class="context-value">
+                                    {{ simulation.exposure }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="context-item">
+
+                                <span class="context-label">
+                                    Criticality
+                                </span>
+
+                                <span class="context-value">
+                                    {{ simulation.criticality }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- VULNERABILITY DELTA -->
+
+                <section class="panel" style="margin-top: 18px;">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Vulnerability Delta
+                        </h2>
+
+                        <p>
+                            Change in vulnerability exposure.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="delta-box">
+
+                            <div class="delta-title">
+                                Vulnerability Change
+                            </div>
+
+                            <div class="delta-value">
+
+                                {% if simulation.vulnerability_reduction > 0 %}
+                                    ↓ {{ simulation.vulnerability_reduction }}
+                                {% elif simulation.vulnerability_reduction < 0 %}
+                                    ↑ {{ simulation.vulnerability_reduction | abs }}
+                                {% else %}
+                                    0
+                                {% endif %}
+
+                            </div>
+
+                            <div class="delta-subtitle">
+
+                                {% if simulation.vulnerability_reduction > 0 %}
+                                    {{ simulation.vulnerability_reduction_percentage }}%
+                                    reduction in vulnerability count.
+                                {% elif simulation.vulnerability_reduction < 0 %}
+                                    Vulnerability exposure increases
+                                    under the target version.
+                                {% else %}
+                                    Vulnerability count remains unchanged.
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ACTIONS -->
+
+                <section class="panel" style="margin-top: 18px;">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Simulation Actions
+                        </h2>
+
+                        <p>
+                            Continue security analysis.
+                        </p>
+
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="actions">
+
+                            <a
+                                href="{{ url_for('index') }}"
+                                class="action-btn"
+                            >
+                                Dashboard
+                            </a>
+
+                            <a
+                                href="{{ url_for('index') }}#graph"
+                                class="action-btn"
+                            >
+                                Dependency Graph
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             FOOTER
+        ========================================== -->
+
+        <footer class="footer">
+            VulnGraph · Explainable Risk- and Trust-Aware
+            Dependency Security Analysis
+        </footer>
 
     </div>
 
-</body>
+</div>
 
+</body>
 </html>
